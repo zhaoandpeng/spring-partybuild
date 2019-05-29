@@ -20,28 +20,4 @@ public class BaseOrganizationServiceImpl extends BaseServiceImpl<BaseOrganizatio
 		return baseOrganizationDao.delBatchByPrimary(id);
 	}
 
-	
-	/*
-	 * @Resource private BaseOrganizationDao baseOrganizationDao;
-	 * 
-	 * 
-	 * @Override public void deleteByIds(List<String> ids) {
-	 * 
-	 * StringBuffer buffer = new StringBuffer();
-	 * 
-	 * if(!ids.isEmpty()) {
-	 * 
-	 * for (String string : ids) {
-	 * 
-	 * buffer.append(" delete from base_organization where id = '"+string+"'");
-	 * 
-	 * baseOrganizationDao.deleteById }
-	 * 
-	 * }
-	 * 
-	 * 
-	 * 
-	 * }
-	 */
-
 }
