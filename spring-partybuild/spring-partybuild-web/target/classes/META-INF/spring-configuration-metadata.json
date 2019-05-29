@@ -1,0 +1,17 @@
+{
+  "groups": [
+    {
+      "name": "default.security.login",
+      "type": "com.cn.wisdom.security.LocalDefaultLoginProperties",
+      "sourceType": "com.cn.wisdom.security.LocalDefaultLoginProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "default.security.login.login-page",
+      "type": "java.lang.String",
+      "sourceType": "com.cn.wisdom.security.LocalDefaultLoginProperties"
+    }
+  ],
+  "hints": []
+}
