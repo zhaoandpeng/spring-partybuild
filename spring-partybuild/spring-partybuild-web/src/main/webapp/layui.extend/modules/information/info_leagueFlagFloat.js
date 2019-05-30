@@ -9,7 +9,7 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'zTre
 	    skin:'row',
 	    even:true,
 	    toolbar:'#toolbar',
-	    url: '/api/v1/sys/dict/index/view',
+	    url: '/api/v1/information/notice/index/view',
 	    page: true ,
 	    cols: [[ 
 	    	{checkbox: true,fixed: 'left'},

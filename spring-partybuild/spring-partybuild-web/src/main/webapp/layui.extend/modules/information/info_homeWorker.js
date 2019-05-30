@@ -9,7 +9,7 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'zTre
 	    skin:'row',
 	    even:true,
 	    toolbar:'#toolbar',
-	    url: '/api/v1/sys/dict/index/view',
+	    url: '/api/v1/information/notice/index/view',
 	    page: true ,
 	    cols: [[ 
 	    	{checkbox: true,fixed: 'left'},
@@ -25,35 +25,15 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'zTre
 	    }
   });
   
-  var setting = {
-		  view: {
-			  showLine: true,
-			  fontCss:{'color':'black','font-weight':'bold'},
-			  selectedMulti: true 
-		  },
-		  check:{
-			  chkStyle: "checkbox",
-			  enable: true 
-		  },
-		  data: {
-			  simpleData: {
-				  enable:true,
-				  idKey: "id",
-				  pIdKey: "pId",
-				  rootPId: null,
-			  }
-		  }
-  };
-  var setting = {};
-  
-  var zNodes = [
-	   {name:"test1", open:true, children:[
-	      {name:"test1_1"}, {name:"test1_2"}]},
-	   {name:"test2", open:true, children:[
-	      {name:"test2_1"}, {name:"test2_2"}]}
-	   ];
-
-  zTreeObj = layui.zTree.init($("#org_tree"), setting, zNodes);
+  dtree.render({
+	  initLevel: 1,
+	  leafIconArray:{"1":"dtree-icon-fenzhijigou"},
+	  dot:false,
+	  nodeIconArray:{"1":{"open":"dtree-icon-fenzhijigou","close":"dtree-icon-fenzhijigou"}},  // 自定扩展的二级非最后一级图标，从1开始
+	  elem: "#org_tree_view",
+	  icon:  ["1","1"],
+	  url: "/api/v1/sys/organization/tree/view"
+  });
   
   table.on('toolbar(operation)', function(obj){
 	  

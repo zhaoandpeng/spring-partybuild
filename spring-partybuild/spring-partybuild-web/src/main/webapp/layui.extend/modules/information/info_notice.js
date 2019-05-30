@@ -1,53 +1,6 @@
-layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'dtree', 'zTree', 'form'], function(exports){  
+layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'dtree', 'form'], function(exports){  
   
-	
-	var demoData  =  [{
-		"id":"001",
-		"title": "湖南省",
-		"isLast": false,
-		"level": "1",
-		"parentId": "0",
-		"checkArr": [{"type": "0", "isChecked": "0"}],  
-                "basicData": {"data1": "自定义数据111", "data2": "自定义数据222", "data3": "自定义'我带了单引号'333"},
-		"children":[{
-			"id":"001001",
-			"title": "长沙市",
-			"isLast":true,
-			"parentId": "001",
-			"checkArr": [{"type": "0", "isChecked": "0"}],
-			"level": "2"
-		},{
-			"id":"001002",
-			"title": "株洲市",
-			"isLast":true,
-			"parentId": "001",
-			"checkArr": [{"type": "0", "isChecked": "0"}],
-			"level": "2"
-		},{
-			"id":"001003",
-			"title": "湘潭市",
-			"isLast":true,
-			"parentId": "001",
-			"checkArr": [{"type": "0", "isChecked": "0"}],
-			"level": "2"
-		},{
-			"id":"001004",
-			"title": "衡阳市",
-			"isLast":true,
-			"parentId": "001",
-			"checkArr": [{"type": "0", "isChecked": "0"}],
-			"level": "2"
-		},{
-			"id":"001005",
-			"title": "郴州市",
-			"isLast":true,
-			"parentId": "001",
-			"checkArr": [{"type": "0", "isChecked": "0"}],
-			"level": "2"
-		}]
-	}]
-	
-  var layer = layui.layer, element = layui.element, $ = layui.jquery,  table = layui.table,  form = layui.form, laydate = layui.laydate,  dtree = layui.dtree, layedit = layui.layedit, zTreeObj; 
+  var layer = layui.layer, element = layui.element, $ = layui.jquery,  table = layui.table,  form = layui.form, laydate = layui.laydate,  dtree = layui.dtree, layedit = layui.layedit; 
   
   var tableIns = table.render({
 	  	id:'mainData',
@@ -65,12 +18,6 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'dtre
 	    	{field: 'createName', title: '发布人', width:180, align: 'center'},
 	    	{field: 'createTime', title: '发布时间', width:180, align: 'center'},
 	    	{fixed: 'right', title: '操作', width: 320, align:'center', toolbar: '#rowbar',}
-//	    	{field: 'ID', title: '序号', width:300, align: 'center'},
-//	    	{field: 'PID', title: '标题', width:300, align: 'center'},
-//	    	{field: 'PARENT_ITEM_CODE', title: '状态', width:180, align: 'center'},
-//	    	{field: 'ITEM_CODE', title: '发布人', width:180, align: 'center'},
-//	    	{field: 'ITEM_NAME', title: '发布时间', width:150, align: 'center'},
-//	    	{fixed: 'right', title: '操作', width: 320, align:'center', toolbar: '#rowbar'}
 	    ]],
 	    done : function(){
 	       $('th').css({'background-color': '#009688', 'color': '#fff','font-weight':'bold'})
@@ -80,41 +27,14 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'dtre
   /**加载组织机构树形列表**/
   
   dtree.render({
-	  elem: "#org_tree",
-	  skin: "layui",
-	  data: demoData
-//	  url: "../json/case/demoTree1.json"  //异步接口
+	  initLevel: 5,
+	  leafIconArray:{"1":"dtree-icon-fenzhijigou"},
+	  dot:false,
+	  nodeIconArray:{"1":{"open":"dtree-icon-fenzhijigou","close":"dtree-icon-fenzhijigou"}},
+	  elem: "#org_tree_view",
+	  icon:  ["1","1"],
+	  url: "/api/v1/sys/organization/tree/view"
   });
-  
-  /*var setting = {
-		  view: {
-			  showLine: true,
-			  fontCss:{'color':'black','font-weight':'bold'},
-			  selectedMulti: true 
-		  },
-		  check:{
-			  chkStyle: "checkbox",
-			  enable: true 
-		  },
-		  data: {
-			  simpleData: {
-				  enable:true,
-				  idKey: "id",
-				  pIdKey: "pId",
-				  rootPId: null,
-			  }
-		  }
-  };*/
-//  var setting = {};
-  
-  var zNodes = [
-	   {name:"test1", open:true, children:[
-	      {name:"test1_1"}, {name:"test1_2"}]},
-	   {name:"test2", open:true, children:[
-	      {name:"test2_1"}, {name:"test2_2"}]}
-	   ];
-
-//  zTreeObj = layui.zTree.init($("#org_tree"), setting, zNodes);
   
   table.on('toolbar(operation)', function(obj){
 	  
@@ -359,6 +279,5 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'dtre
   }
   
 }).extend({
-	zTree: '../ztree/jquery.ztree.core',
-	dtree: '{/}/layui.extend/modules/layui_ext/dist/dtree'
+	dtree: '{/}/layui.extend/modules/layui_ext/dtree/dtree'
 });

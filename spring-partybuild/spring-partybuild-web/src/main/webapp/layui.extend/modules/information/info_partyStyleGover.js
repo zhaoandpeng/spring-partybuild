@@ -1,59 +1,39 @@
-layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'zTree', 'form'], function(exports){  
+layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'dtree', 'form'], function(exports){  
   
 	
-  var layer = layui.layer, element = layui.element, $ = layui.jquery,  table = layui.table,  form = layui.form, laydate = layui.laydate, layedit = layui.layedit, zTreeObj; 
+  var layer = layui.layer, element = layui.element, $ = layui.jquery,  table = layui.table,  form = layui.form,  dtree = layui.dtree,	laydate = layui.laydate, layedit = layui.layedit; 
   
   var tableIns = table.render({
-	  	id:'mainData',
-	    elem: '#main_table',
-	    skin:'row',
-	    even:true,
-	    toolbar:'#toolbar',
-	    url: '/api/v1/sys/dict/index/view',
-	    page: true ,
-	    cols: [[ 
-	    	{checkbox: true,fixed: 'left'},
-	    	{field: 'ID', title: '序号', width:300, align: 'center'},
-	    	{field: 'PID', title: '标题', width:300, align: 'center'},
-	    	{field: 'PARENT_ITEM_CODE', title: '状态', width:180, align: 'center'},
-	    	{field: 'ITEM_CODE', title: '发布人', width:180, align: 'center'},
-	    	{field: 'ITEM_NAME', title: '发布时间', width:150, align: 'center'},
-	    	{fixed: 'right', title: '操作', width: 320, align:'center', toolbar: '#rowbar'}
-	    ]],
-	    done : function(){
-	       $('th').css({'background-color': '#009688', 'color': '#fff','font-weight':'bold'})
-	    }
+	  id:'mainData',
+	  elem: '#main_table',
+	  skin:'row',
+	  even:true,
+	  toolbar:'#toolbar',
+	  url: '/api/v1/information/notice/index/view',
+	  page: true ,
+	  cols: [[ 
+		  {checkbox: true,fixed: 'left'},
+		  {field: 'orderNo', title: '序号', width:100, align: 'center'},
+		  {field: 'title', title: '标题', width:300, align: 'center'},
+		  {field: 'status', title: '状态', width:180, align: 'center', templet: '#statusTpl'},
+		  {field: 'createName', title: '发布人', width:180, align: 'center'},
+		  {field: 'createTime', title: '发布时间', width:180, align: 'center'},
+		  {fixed: 'right', title: '操作', width: 320, align:'center', toolbar: '#rowbar',}
+		  ]],
+		  done : function(){
+			  $('th').css({'background-color': '#009688', 'color': '#fff','font-weight':'bold'})
+		  }
   });
   
-  var setting = {
-		  view: {
-			  showLine: true,
-			  fontCss:{'color':'black','font-weight':'bold'},
-			  selectedMulti: true 
-		  },
-		  check:{
-			  chkStyle: "checkbox",
-			  enable: true 
-		  },
-		  data: {
-			  simpleData: {
-				  enable:true,
-				  idKey: "id",
-				  pIdKey: "pId",
-				  rootPId: null,
-			  }
-		  }
-  };
-  var setting = {};
-  
-  var zNodes = [
-	   {name:"test1", open:true, children:[
-	      {name:"test1_1"}, {name:"test1_2"}]},
-	   {name:"test2", open:true, children:[
-	      {name:"test2_1"}, {name:"test2_2"}]}
-	   ];
-
-  zTreeObj = layui.zTree.init($("#org_tree"), setting, zNodes);
+  dtree.render({
+	  initLevel: 5,
+	  leafIconArray:{"1":"dtree-icon-fenzhijigou"},
+	  dot:false,
+	  nodeIconArray:{"1":{"open":"dtree-icon-fenzhijigou","close":"dtree-icon-fenzhijigou"}},
+	  elem: "#org_tree_view",
+	  icon:  ["1","1"],
+	  url: "/api/v1/sys/organization/tree/view"
+  });
   
   table.on('toolbar(operation)', function(obj){
 	  
@@ -336,4 +316,4 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'zTre
 	  });
   }
   
-}).extend({zTree: '../ztree/jquery.ztree.core'});
+}).extend({dtree: '{/}/layui.extend/modules/layui_ext/dtree/dtree'});
