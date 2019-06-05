@@ -36,6 +36,22 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'dtre
 	  url: "/api/v1/sys/organization/tree/view"
   });
   
+  dtree.on("node(org_tree_view)", function(obj){
+	  $(".layui-breadcrumb a").removeClass('layui-bg-orange');
+	  table.reload('mainData', {
+		  url: '/api/v1/information/notice/ajax/getList'
+		  ,where: { 
+			  nodeId: obj.param.nodeId
+		  }
+		  ,page: {
+			  curr: 1 //重新从第 1 页开始
+		  }
+		  ,done: function(res, curr, count){
+		      this.where={};
+		  }
+	  });
+  })
+  
   table.on('toolbar(operation)', function(obj){
 	  
 	  	var checkStatus = table.checkStatus(obj.config.id) ,data = checkStatus.data; 
@@ -62,7 +78,7 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'dtre
   
   function add(){
 	  
-	  var index;
+	  var textarea_content;
 	  
 	  var add = layer.open({ 
 		  type: 1, title:"新增通知公告",
@@ -75,7 +91,7 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'dtre
 		  content: $('#add_form'),
 		  yes:function(index,layero){
 			  
-			  $("#add_form textarea[name='content']").val(layedit.getContent(index));
+			  $("#add_form textarea[name='content']").val(layedit.getContent(textarea_content));
 			  
 			  $("#add_form_submit").trigger("click");
 		  },
@@ -99,7 +115,7 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'dtre
 				  }
 			  });
 			  
-			  index = layedit.build('content'); //初始化富文本编辑器
+			  textarea_content = layedit.build('content'); //初始化富文本编辑器
 			  
 			  $(window.frames["LAY_layedit_1"].document).find("body").append("<style>img{width:200px;height:200px;}</style>")
 			  
@@ -134,14 +150,8 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'dtre
   
   function del(data){
 	  
-	  var ids = new Array(); 
-	  
-	  $.each(data,function(index,value){
-		  
-		  ids.push(value.ID);
-	  })
 	  $.ajax({
-		  type: 'POST',  url: '/api/v1/sys/dict/delete/'+ids.join(','), dataType : "json",
+		  type: 'POST',  url: '/api/v1/information/notice/del/'+data.id, dataType : "json",
 		  success: function(result) { 
 			  if(result.data.status){
 				  layer.msg('删除成功');  tableIns.reload({ page:{ curr: 1 }});
@@ -260,24 +270,58 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'dtre
   /**详情展示页面**/
   
   function detail(data){
-	  
+	  form.val('detail_form',data );
 	  var edit = layer.open({ 
 		  type: 1, title:"详情页",
 		  resize : false,
 		  maxmin: true,
-//		  btnAlign: 'c',
 		  area: ['850px', '650px'],
 		  skin: 'demo-class',
 		  content: $('.detail'),
 		  success:function(){
+			  var index = layedit.build('detail_content',{tool: []}); //初始化富文本编辑器
+			  $("#detail_content").next().find('iframe').contents().find('body').prop("contenteditable",false);
+			  
+			  $.ajax({
+				  type: 'POST',  url: '/api/v1/sys/dict/get/item/list/read_mark', dataType : "json",
+				  success: function(result) { 
+					  if(result.data.length>0){
+						  $.each(result.data,function(index,value){
+							  if(value.ITEM_VALUE==data.read){
+								  $(".detail input[name='read']").val(value.ITEM_NAME)
+							  }
+							  /*$('#modify_form .is_read').append(option);
+							  form.render('select');*/
+						  })
+					  }
+				  }
+			  });
 		  },
 		  end:function(){
 			  location.reload();
 		  }
-	  }); 
-	  
+	  });
   }
   
-}).extend({
-	dtree: '{/}/layui.extend/modules/layui_ext/dtree/dtree'
-});
+  /**根据条件查询数据**/
+  
+  $(document).on('click','.layui-breadcrumb a',function(){
+	  $(".layui-breadcrumb a").removeClass('layui-bg-orange');
+	  $(this).addClass('layui-bg-orange');
+	  var status = $(this).attr('status');
+	  table.reload('mainData', {
+		  url: '/api/v1/information/notice/ajax/getList'
+		  ,where: { 
+			  status: status
+		  }
+		  ,page: {
+			  curr: 1 //重新从第 1 页开始
+		  }
+		  ,done: function(res, curr, count){
+		      this.where={};
+		  }
+	  });
+  });
+  
+  
+}).extend({ dtree: '{/}/layui.extend/modules/layui_ext/dtree/dtree'});

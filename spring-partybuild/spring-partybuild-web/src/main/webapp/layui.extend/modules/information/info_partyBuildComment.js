@@ -1,7 +1,6 @@
-layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'zTree', 'form'], function(exports){  
+layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'dtree', 'form'], function(exports){  
   
-	
-  var layer = layui.layer, element = layui.element, $ = layui.jquery,  table = layui.table,  form = layui.form, laydate = layui.laydate, layedit = layui.layedit, zTreeObj; 
+  var layer = layui.layer, element = layui.element, $ = layui.jquery,  table = layui.table,  form = layui.form, laydate = layui.laydate,  dtree = layui.dtree, layedit = layui.layedit; 
   
   var tableIns = table.render({
 	  	id:'mainData',
@@ -9,51 +8,49 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'zTre
 	    skin:'row',
 	    even:true,
 	    toolbar:'#toolbar',
-	    url: '/api/v1/sys/dict/index/view',
+	    url: '/api/v1/information/partyBuildComment/index/view',
 	    page: true ,
 	    cols: [[ 
 	    	{checkbox: true,fixed: 'left'},
-	    	{field: 'ID', title: '序号', width:300, align: 'center'},
-	    	{field: 'PID', title: '标题', width:300, align: 'center'},
-	    	{field: 'PARENT_ITEM_CODE', title: '状态', width:180, align: 'center'},
-	    	{field: 'ITEM_CODE', title: '发布人', width:180, align: 'center'},
-	    	{field: 'ITEM_NAME', title: '发布时间', width:150, align: 'center'},
-	    	{fixed: 'right', title: '操作', width: 320, align:'center', toolbar: '#rowbar'}
+	    	{field: 'orderNo', title: '序号', width:100, align: 'center'},
+	    	{field: 'title', title: '标题', width:300, align: 'center'},
+	    	{field: 'status', title: '状态', width:180, align: 'center', templet: '#statusTpl'},
+	    	{field: 'createName', title: '发布人', width:180, align: 'center'},
+	    	{field: 'createTime', title: '发布时间', width:180, align: 'center'},
+	    	{fixed: 'right', title: '操作', width: 320, align:'center', toolbar: '#rowbar',}
 	    ]],
 	    done : function(){
 	       $('th').css({'background-color': '#009688', 'color': '#fff','font-weight':'bold'})
 	    }
   });
   
-  var setting = {
-		  view: {
-			  showLine: true,
-			  fontCss:{'color':'black','font-weight':'bold'},
-			  selectedMulti: true 
-		  },
-		  check:{
-			  chkStyle: "checkbox",
-			  enable: true 
-		  },
-		  data: {
-			  simpleData: {
-				  enable:true,
-				  idKey: "id",
-				  pIdKey: "pId",
-				  rootPId: null,
-			  }
-		  }
-  };
-  var setting = {};
+  /**加载组织机构树形列表**/
   
-  var zNodes = [
-	   {name:"test1", open:true, children:[
-	      {name:"test1_1"}, {name:"test1_2"}]},
-	   {name:"test2", open:true, children:[
-	      {name:"test2_1"}, {name:"test2_2"}]}
-	   ];
-
-  zTreeObj = layui.zTree.init($("#org_tree"), setting, zNodes);
+  dtree.render({
+	  initLevel: 5,
+	  leafIconArray:{"1":"dtree-icon-fenzhijigou"},
+	  dot:false,
+	  nodeIconArray:{"1":{"open":"dtree-icon-fenzhijigou","close":"dtree-icon-fenzhijigou"}},
+	  elem: "#org_tree_view",
+	  icon:  ["1","1"],
+	  url: "/api/v1/sys/organization/tree/view"
+  });
+  
+  dtree.on("node(org_tree_view)", function(obj){
+	  $(".layui-breadcrumb a").removeClass('layui-bg-orange');
+	  table.reload('mainData', {
+		  url: '/api/v1/information/partyBuildComment/ajax/getList'
+		  ,where: { 
+			  nodeId: obj.param.nodeId
+		  }
+		  ,page: {
+			  curr: 1 //重新从第 1 页开始
+		  }
+		  ,done: function(res, curr, count){
+		      this.where={};
+		  }
+	  });
+  })
   
   table.on('toolbar(operation)', function(obj){
 	  
@@ -74,77 +71,17 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'zTre
 	    };
   });
   
-  
   exports('info_partyBuildComment', function(){ }); 
   
   
-  /*加载父级选项码选择表*/
-  $(".btn_item_code").click(function(){
-	  
-	  var operate = this.value;
-	  
-	  table.on('rowDouble(item_code)', function(row){
-		  
-		  var pid = row.data.ID;
-		  
-		  var item_code = row.data.ITEM_CODE;
-		  
-		  if(operate.indexOf('add')!=-1){
-			  
-			  $('#add_form input[name="PID"]').val(pid);
-			  
-			  $('#add_form input[name="PARENT_ITEM_CODE"]').val(item_code);
-			  
-		  }
-		  if(operate.indexOf('modify')!=-1){
-			  
-			  $('#modify_form input[name="PID"]').val(pid);
-			  
-			  $('#modify_form input[name="PARENT_ITEM_CODE"]').val(item_code);
-			  
-		  }
-		  
-		  layer.close(view_item_code);
-	  });
-	  
-	  var view_item_code = layer.open({ 
-		  type: 1, title:"父级选项码选择表",
-		  resize : false,
-		  maxmin: true,
-		  btnAlign: 'c',
-		  area: ['650px', '400px'],
-		  skin: 'demo-class',
-		  content: $('#div_item_code_tab'),
-		  success:function(){
-			  $('#div_item_code_tab').css('display','block');
-		  }
-	  });
-	  
-	  var item_code_tab = table.render({
-		  id:'itemCodeData',
-		  elem: '#tab_item_code',
-		  skin:'row',
-		  even:true,
-		  url: '/api/v1/sys/dict/get/item/code',
-		  page: true ,
-		  cols: [[ 
-			  {field: 'PID', title: '父级主键', width:150, align: 'center',hide:true},
-			  {field: 'ITEM_CODE', title: '选项码', width:200, align: 'center'},
-			  {field: 'ITEM_NAME', title: '选项描述', width:250, align: 'center'},
-			  {field: 'STATUS', title: '选项状态', width:150, align: 'center',hide:true}
-			  ]],
-			  done : function(){
-				  $('th').css({'background-color': '#009688', 'color': '#fff','font-weight':'bold'})
-			  }
-	  });
-  })
-  
-  /**新增发布通知公告**/
+  /**新增**/
   
   function add(){
 	  
+	  var textarea_content;
+	  
 	  var add = layer.open({ 
-		  type: 1, title:"新增通知公告",
+		  type: 1, title:"新增信息",
 		  resize : false,
 		  maxmin: true,
 		  btn: [ '保存', '取消', ],
@@ -153,6 +90,9 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'zTre
 		  skin: 'demo-class',
 		  content: $('#add_form'),
 		  yes:function(index,layero){
+			  
+			  $("#add_form textarea[name='content']").val(layedit.getContent(textarea_content));
+			  
 			  $("#add_form_submit").trigger("click");
 		  },
 		  success:function(){
@@ -168,7 +108,16 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'zTre
 					  }
 				  }
 			  });
-			  layedit.build('content'); //初始化富文本编辑器
+			  
+			  layedit.set({
+				  uploadImage: {
+					  url: '/api/v1/file/image/upload'
+				  }
+			  });
+			  
+			  textarea_content = layedit.build('content'); //初始化富文本编辑器
+			  
+			  $(window.frames["LAY_layedit_1"].document).find("body").append("<style>img{width:200px;height:200px;}</style>")
 			  
 			  laydate.render({
 				  	elem: '#add_time', //绑定日期格式INPUT元素
@@ -183,74 +132,12 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'zTre
 	  
 	  form.on('submit(addform)', function(data){
 		  $.ajax({
-			  type: 'POST',  url: '/api/v1/sys/dict/add_or_update', dataType : "json", data: data.field,
+			  type: 'POST',  url: '/api/v1/information/partyBuildComment/add_or_update', dataType : "json", data: data.field,
 			  success: function(result) { 
 				  if(result.data.status){
 					  layer.msg('保存成功'); layer.close(add);  tableIns.reload({ page:{ curr: 1 }});
 				  }else{
 					  layer.msg('保存失败 [ '+result.data.message+']');
-				  }
-			  }
-		  });
-		  return false;
-	  });
-	  
-	  form.on('radio(addform)', function(data){
-		  $('input:radio[name=status]')[0].checked = false;
-		  form.render('radio');
-	  });
-	  
-  }
-  
-  /**编辑已发布通知公告**/
-  
-  function modify(data){
-	  
-	  form.val('modify_form', data[0]);
-	  
-	  var modify = layer.open({ 
-		  type: 1, title:"修改字典",
-		  resize : false,
-		  btn: [  '保存', '取消', ],
-		  btnAlign: 'c',
-		  area: ['650px', '480px'],
-		  skin: 'demo-class',
-		  content: $('#modify_form'),
-		  yes:function(index,layero){
-			  $("#modify_form_submit").trigger("click");
-		  },
-		  success:function(){
-			  $.ajax({
-				  type: 'POST',  url: '/api/v1/sys/dict/get/item/list/enable_disable_mark', dataType : "json",
-				  success: function(result) { 
-					  if(result.data.length>0){
-						  var html = "";
-						  $.each(result.data,function(index,value){
-							  if(value.ITEM_VALUE=='1'){
-								  html = html + '<input type="radio" name="STATUS" value="'+value.ITEM_VALUE+'" title="'+value.ITEM_NAME+'" checked>'
-							  }else{
-								  html =  '<input type="radio" name="STATUS" value="'+value.ITEM_VALUE+'" title="'+value.ITEM_NAME+'">'
-							  }
-						  })
-						  $('#modify_form .status').append(html);
-						  form.render('radio');
-					  }
-				  }
-			  });
-		  },
-		  end:function(){
-			  location.reload();
-		  }
-	  });
-	  
-	  form.on('submit(modifyform)', function(data){
-		  $.ajax({
-			  type: 'POST',  url: '/api/v1/sys/dict/add_or_update', dataType : "json", data: data.field,
-			  success: function(result) { 
-				  if(result.data.status){
-					  layer.msg('修改成功'); layer.close(modify);  tableIns.reload({ page:{ curr: 1 }});
-				  }else{
-					  layer.msg(result.data.message);
 				  }
 			  }
 		  });
@@ -263,14 +150,8 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'zTre
   
   function del(data){
 	  
-	  var ids = new Array(); 
-	  
-	  $.each(data,function(index,value){
-		  
-		  ids.push(value.ID);
-	  })
 	  $.ajax({
-		  type: 'POST',  url: '/api/v1/sys/dict/delete/'+ids.join(','), dataType : "json",
+		  type: 'POST',  url: '/api/v1/information/notice/del/'+data.id, dataType : "json",
 		  success: function(result) { 
 			  if(result.data.status){
 				  layer.msg('删除成功');  tableIns.reload({ page:{ curr: 1 }});
@@ -336,4 +217,111 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'zTre
 	  });
   }
   
-}).extend({zTree: '../ztree/jquery.ztree.core'});
+  /**编辑展示页面**/
+  
+  function edit(data){
+	  
+	  form.val('modify_form', data);
+	  
+	  var edit = layer.open({ 
+		  type: 1, title:"编辑页",
+		  resize : false,
+		  maxmin: true,
+		  btnAlign: 'c',
+		  area: ['850px', '650px'],
+		  skin: 'demo-class',
+		  content: $('#modify_form'),
+		  success:function(){
+			  $.ajax({
+				  type: 'POST',  url: '/api/v1/sys/dict/get/item/list/read_mark', dataType : "json",
+				  success: function(result) { 
+					  if(result.data.length>0){
+						  $.each(result.data,function(index,value){
+							  var option =new Option(value.ITEM_NAME,value.ITEM_VALUE);
+							  $('#modify_form .is_read').append(option);
+							  form.render('select');
+						  })
+					  }
+				  }
+			  });
+			  
+			  layedit.set({
+				  uploadImage: {
+					  url: '/api/v1/file/image/upload'
+				  }
+			  });
+			  
+			  index = layedit.build('modifyContent'); //初始化富文本编辑器
+			  
+			  $(window.frames["LAY_layedit_1"].document).find("body").append("<style>img{width:200px;height:200px;}</style>")
+			  
+			  laydate.render({
+				  	elem: '#modify_time',
+				    type: 'datetime',
+				    value: new Date()
+			  });
+		  },
+		  end:function(){
+			  location.reload();
+		  }
+	  });
+  }
+  
+  /**详情展示页面**/
+  
+  function detail(data){
+	  form.val('detail_form',data );
+	  var edit = layer.open({ 
+		  type: 1, title:"详情页",
+		  resize : false,
+		  maxmin: true,
+		  area: ['850px', '650px'],
+		  skin: 'demo-class',
+		  content: $('.detail'),
+		  success:function(){
+			  var index = layedit.build('detail_content',{tool: []}); //初始化富文本编辑器
+			  $("#detail_content").next().find('iframe').contents().find('body').prop("contenteditable",false);
+			  
+			  $.ajax({
+				  type: 'POST',  url: '/api/v1/sys/dict/get/item/list/read_mark', dataType : "json",
+				  success: function(result) { 
+					  if(result.data.length>0){
+						  $.each(result.data,function(index,value){
+							  if(value.ITEM_VALUE==data.read){
+								  $(".detail input[name='read']").val(value.ITEM_NAME)
+							  }
+							  /*$('#modify_form .is_read').append(option);
+							  form.render('select');*/
+						  })
+					  }
+				  }
+			  });
+		  },
+		  end:function(){
+			  location.reload();
+		  }
+	  });
+  }
+  
+  /**根据条件查询数据**/
+  
+  $(document).on('click','.layui-breadcrumb a',function(){
+	  $(".layui-breadcrumb a").removeClass('layui-bg-orange');
+	  $(this).addClass('layui-bg-orange');
+	  var status = $(this).attr('status');
+	  table.reload('mainData', {
+		  url: '/api/v1/information/partyBuildComment/ajax/getList'
+		  ,where: { 
+			  status: status
+		  }
+		  ,page: {
+			  curr: 1 //重新从第 1 页开始
+		  }
+		  ,done: function(res, curr, count){
+		      this.where={};
+		  }
+	  });
+  });
+  
+  
+}).extend({ dtree: '{/}/layui.extend/modules/layui_ext/dtree/dtree'});
