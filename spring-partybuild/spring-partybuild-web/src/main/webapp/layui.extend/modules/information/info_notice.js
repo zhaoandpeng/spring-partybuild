@@ -109,6 +109,41 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'dtre
 				  }
 			  });
 			  
+			  dtree.render({
+					initLevel: 5,
+					leafIconArray:{"1":"dtree-icon-fenzhijigou"},
+					dot:false,
+					nodeIconArray:{"1":{"open":"dtree-icon-fenzhijigou","close":"dtree-icon-fenzhijigou"}},
+					elem: "#org_tree",
+					icon:  ["1","1"],
+					url: "/api/v1/sys/organization/tree/view"
+			  });
+			  
+			  dtree.render({
+				  elem: "#leftTree",
+				  initLevel: 5,
+				  leafIconArray:{"1":"dtree-icon-fenzhijigou"},
+				  dot:false,
+				  nodeIconArray:{"1":{"open":"dtree-icon-fenzhijigou","close":"dtree-icon-fenzhijigou"}},
+				  icon:  ["1","1"],
+				  url: "/api/v1/sys/organization/tree/view",
+				  checkbar:true,
+				  load:false
+			  });
+			  
+			  dtree.render({
+				  elem: "#rightTree",
+				  data: [],
+				  initLevel: 5,
+				  leafIconArray:{"1":"dtree-icon-fenzhijigou"},
+				  dot:false,
+				  nodeIconArray:{"1":{"open":"dtree-icon-fenzhijigou","close":"dtree-icon-fenzhijigou"}},
+				  icon:  ["1","1"],
+				  checkbar:true,
+				  response:{treeId:"nodeId",title:"context"},
+				  dataFormat:"list"
+			  });
+			  
 			  layedit.set({
 				  uploadImage: {
 					  url: '/api/v1/file/image/upload'
@@ -128,6 +163,14 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'dtre
 		  end:function(){
 			  location.reload();
 		  }
+	  });
+	  
+	  $("#set_btn").click(function(){
+		  var param = dtree.getCheckbarNodesParam("leftTree");  // 获取选中数据
+		  if(param.length == 0) {
+		    layer.msg("请至少选择一个节点");
+		  }
+		  dtree.reload("rightTree",{data:param});
 	  });
 	  
 	  form.on('submit(addform)', function(data){
