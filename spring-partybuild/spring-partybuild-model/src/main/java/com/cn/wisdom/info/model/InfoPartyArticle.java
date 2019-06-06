@@ -29,7 +29,7 @@ public class InfoPartyArticle implements Serializable{
 	
 	private String content; //文章内容
 	
-	private String read; //是否必读
+	private String isRead; //是否必读
 	
 	private String receiveOrgId; //下发机构主键
 	
@@ -37,9 +37,9 @@ public class InfoPartyArticle implements Serializable{
 	
 	private Integer orderNo; //自增排序号
 	
-	private String type; //文章类型  [通知公告=0]
+	private String type; //文章类型  [通知公告=0 精准扶贫=1 党风廉政=2 制度文件=3 职工之家=4 党旗领航=5 党建要闻=6 党史与研究=7 党员风采=8 团旗飘飘=9 党建评论=10 消息中心=11]
 	
-	private String delFlag = "0"; //删除标识  [未删除=0 1=已删除]
+//	private String delFlag = "0"; //删除标识  [未删除=0 1=已删除]
 
 	public String getId() {
 		return id;
@@ -120,13 +120,12 @@ public class InfoPartyArticle implements Serializable{
 		this.content = content == null? null: content;
 	}
 	 
-
-	public String getRead() {
-		return read;
+	public String getIsRead() {
+		return isRead;
 	}
 
-	public void setRead(String read) {
-		this.read = read;
+	public void setIsRead(String isRead) {
+		this.isRead = isRead;
 	}
 
 	public String getReceiveOrgId() {
@@ -161,12 +160,9 @@ public class InfoPartyArticle implements Serializable{
 		this.type = type == null? null: type.trim();
 	}
 
-	public String getDelFlag() {
-		return delFlag;
-	}
-
-	public void setDelFlag(String delFlag) {
-		this.delFlag = delFlag;
-	}
-
+	/*
+	 * public String getDelFlag() { return delFlag; }
+	 * 
+	 * public void setDelFlag(String delFlag) { this.delFlag = delFlag; }
+	 */
 }
