@@ -43,6 +43,12 @@ public class InfoReport implements Serializable{
 
 	@Column(name = "report_type")
     private String reportType;
+	
+	@Column(name = "create_time")
+	private String createTime;
+	
+	@Column(name = "update_time")
+	private String updateTime;
 
 	@Column(name = "order_no")
     private Integer orderNo;
@@ -126,8 +132,24 @@ public class InfoReport implements Serializable{
     public void setReportType(String reportType) {
         this.reportType = reportType == null ? null : reportType.trim();
     }
+    
+    public String getCreateTime() {
+		return createTime;
+	}
 
-    public Integer getOrderNo() {
+	public void setCreateTime(String createTime) {
+		this.createTime = createTime;
+	}
+
+	public String getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(String updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public Integer getOrderNo() {
         return orderNo;
     }
 

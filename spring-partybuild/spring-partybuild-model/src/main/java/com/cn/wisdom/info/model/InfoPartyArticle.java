@@ -37,7 +37,7 @@ public class InfoPartyArticle implements Serializable{
 	
 	private Integer orderNo; //自增排序号
 	
-	private String type; //文章类型  [通知公告=0 精准扶贫=1 党风廉政=2 制度文件=3 职工之家=4 党旗领航=5 党建要闻=6 党史与研究=7 党员风采=8 团旗飘飘=9 党建评论=10 消息中心=11]
+	private String type; //文章类型  [通知公告=0 精准扶贫=1 党风廉政=2 制度文件=3 职工之家=4 党旗领航=5 党建要闻=6 党史与研究=7 党员风采=8 团旗飘飘=9 党建评论=10 消息中心=11 纪检监察=12 党务公开=13]
 	
 //	private String delFlag = "0"; //删除标识  [未删除=0 1=已删除]
 
