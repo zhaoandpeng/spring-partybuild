@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import com.cn.wisdom.base.dao.BaseDao;
 import com.cn.wisdom.base.model.SqlEntry;
+import com.cn.wisdom.utils.Column;
 import com.cn.wisdom.utils.EventType;
 import com.cn.wisdom.utils.PageHelper;
 import com.cn.wisdom.utils.TableInfoAnnotation;
@@ -217,6 +218,10 @@ public class BaseDaoImpl<T, K> implements BaseDao<T, java.lang.String> {
 			
 			val = field.get(t);
 			
+			String column_name = field.getAnnotation(Column.class)==null? null:field.getAnnotation(Column.class).name();
+			
+			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>="+column_name);
+			
 			if(fields.length==i) { buffer.append(field.getName()+"=?"); }else { buffer.append(field.getName()+" = ?,"); }
 			
 			listField.add(val);
@@ -298,6 +303,42 @@ public class BaseDaoImpl<T, K> implements BaseDao<T, java.lang.String> {
 				sql.append(" and "+entry.getKey()+"='"+entry.getValue().toString()+"'");
 			}
 		}
+		
+		if(StringUtil.isNullOrEmpty(pageModel.getOrderBy())) {
+			
+			sql.append(" order by ").append(clazz.getAnnotation(TableInfoAnnotation.class).primaryKey()).append(" "+pageModel.DESC);
+		}else {
+			
+			sql.append(" order by ").append(pageModel.getOrderBy()).append(" "+pageModel.DESC);
+		}
+		
+		sql.append(" limit ").append((pageModel.getPageNo()-1)*pageModel.getPageSize()+" , "+pageModel.getPageSize());
+		
+		List<T> dataList = jdbcTemplate.query(sql.toString(), new Object[]{}, new BeanPropertyRowMapper<T>(clazz));
+		
+		pageModel.setResult(dataList);
+		
+		return pageModel;
+	}
+	
+	@Override
+	@SuppressWarnings("static-access")
+	public PageHelper<T> getListObjectPageBySql(Class<T> clazz, String buffSql, PageHelper<T> pageModel ) {
+		
+		StringBuffer buffer = new StringBuffer("select count(*) from ("+buffSql+") as temp");
+		
+		int count = jdbcTemplate.queryForObject(buffer.toString(),new Object[]{}, Integer.class);
+		
+		if(0==count) {
+			
+			return pageModel;
+		}
+		
+		pageModel.setTotalPage(count%pageModel.getPageSize()==0?count/pageModel.getPageSize():count/pageModel.getPageSize()+1);//页数
+		
+		pageModel.setTotalCount(count);
+		
+		StringBuffer sql = new StringBuffer(buffSql);
 		
 		if(StringUtil.isNullOrEmpty(pageModel.getOrderBy())) {
 			

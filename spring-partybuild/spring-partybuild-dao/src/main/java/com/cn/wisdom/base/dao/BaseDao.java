@@ -23,6 +23,8 @@ public interface BaseDao<T, K extends Serializable> {
 	
 	PageHelper<T> getListObjectPage(Class<T> clazz, ConcurrentHashMap<String,Object> map, PageHelper<T> pageModel );
 	
+	PageHelper<T> getListObjectPageBySql(Class<T> clazz, String buffSql, PageHelper<T> pageModel );
+	
 	PageHelper<T> getListMapPage(StringBuffer sql, PageHelper<T> pageModel );
 	
 }
