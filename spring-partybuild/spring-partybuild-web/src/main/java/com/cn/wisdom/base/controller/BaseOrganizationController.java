@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.cn.wisdom.base.model.BaseOrganization;
 import com.cn.wisdom.base.service.BaseOrganizationService;
 import com.cn.wisdom.utils.EventType;
+import com.cn.wisdom.utils.Tree;
+import com.cn.wisdom.utils.TreeUtils;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 @Controller
@@ -34,7 +37,7 @@ public class BaseOrganizationController extends BaseController{
 	}
 	
 	@ResponseBody
-	@RequestMapping("/index/view")
+	@RequestMapping(value = "/index/view")
 	public String index_view() {
 		
 		ConcurrentHashMap<String,Object> map = new ConcurrentHashMap<>();
@@ -50,6 +53,46 @@ public class BaseOrganizationController extends BaseController{
 		obj.put("is", true);
 		
 		return obj.toString();
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/tree/view")
+	public String tree_view() {
+		
+		ConcurrentHashMap<String,Object> map = new ConcurrentHashMap<>();
+		
+		List<BaseOrganization> list = baseOrganizationService.getList(BaseOrganization.class, map);
+		
+		Tree<BaseOrganization> t = null;
+		
+		if(null!=list) {
+			
+			List<Tree<BaseOrganization>> trees = new ArrayList<Tree<BaseOrganization>>();
+			
+			for (BaseOrganization model : list) {
+				Tree<BaseOrganization> tree = new Tree<BaseOrganization>();
+				tree.setId(model.getId());
+				tree.setParentId(model.getPid());
+				tree.setTitle(model.getOrgName());
+				tree.setCheckArr("[{\"type\": \"0\", \"checked\": \"0\"}]");
+				trees.add(tree);
+			}
+			
+			t = TreeUtils.build(trees);
+			
+		}
+		
+		JSONObject json = new JSONObject();
+		
+		JSONArray jsonArray = JSONArray.fromObject(t);
+		
+		json.put("data", jsonArray.toString());
+		
+		json.put("data", jsonArray.toString());
+		
+		json.put("status","{\"code\":200,\"message\":\"操作成功\"}");
+		
+		return json.toString();
 	}
 	
 	@ResponseBody
@@ -78,43 +121,17 @@ public class BaseOrganizationController extends BaseController{
 	@RequestMapping(value = "/del")
 	public String del() throws SQLException {
 		boolean global = false;
-        List<String> ids = new ArrayList<>(); // 声明存放需要删除的节点的容器
-		ConcurrentHashMap<String,Object> map = new ConcurrentHashMap<>();
 		ConcurrentHashMap<String,Object> resultMap = new ConcurrentHashMap<>();
 		String id = getRequest().getParameter("id");
 		String pid = getRequest().getParameter("pid");
 		if(StringUtils.isNotBlank(id)&&StringUtils.isNotBlank(pid)) {
-			ids.add(id);	//把自己的id放到集合中
-			this.getIds(id, ids, map);
-			int delCount = baseOrganizationService.deleteBatchByPrimary(BaseOrganization.class, ids);
-			if(delCount==ids.size()) {
+			int delCount = baseOrganizationService.delBatchByPrimary(id);
+			if(delCount!=0) {
 				global = true;
 			}
-			/*
-			 * BaseOrganization model = baseOrganizationService.get(BaseOrganization.class,
-			 * id); global = baseOrganizationService.delete(model);
-			 */
 		}
 		resultMap.put("status", global);
 		return toJson(resultMap);
 	}
 	
-	private void getIds(String id, List<String> ids, ConcurrentHashMap<String,Object> map) {
-        // 根据条件查询当前节点的所有的子节点
-		map.put("pid", id);
-		List<BaseOrganization> listModel = baseOrganizationService.getList(BaseOrganization.class, map);
-        // 使用递归的方式，必须设置递归的停止条件，否则会一直自己调用自己，直到内存溢出
-        // 判断是否还有子节点
-        if (listModel.size() > 0) {
-            // 如果有子节点，遍历结果集
-            for (BaseOrganization son : listModel) {
-                // 1.把子节点的id放到ids容器中
-                ids.add(son.getId());
-                // 2.执行递归，自己调用自己，查询子节点的子
-                map.clear();
-                map.put("pid", son.getId());
-                this.getIds(son.getId(), ids, map);
-            }
-        }
-    }
 }

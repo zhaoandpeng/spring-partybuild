@@ -97,7 +97,7 @@
 		  <div class="layui-form-item" style="margin-left: 120px">
 		    <label class="layui-form-label layui-bg-green">父级菜单</label>
 		    <div class="layui-input-block" style="width:300px;">
-		      <select type="text" name="PID" required  lay-verify="required" class="layui-select" ></select>
+		      <select type="text" name="PID" required  lay-verify="required" class="layui-select modify_pid" ></select>
 		    </div>
 		  </div>
 		  <div class="layui-form-item" style="margin-left: 120px">

@@ -65,12 +65,11 @@ layui.define(['layer', 'element', 'form', 'treeGrid', 'jquery', 'table'], functi
 	  });
 	  
 	  form.on('submit(addform)', function(data){
-		  alert("RRR")
 		  $.ajax({
 			  type: 'POST',  url: '/api/v1/sys/organization/add', dataType : "json", data: data.field,
 			  success: function(result) { 
 				  if(result.data.status){
-					  layer.msg('保存成功'); layer.close(add);  tableIns.reload({ page:{ curr: 1 }});
+					  layer.msg('保存成功'); layer.close(add);
 				  }else{
 					  layer.msg('保存失败 [ '+result.data.message+']');
 				  }
@@ -85,16 +84,15 @@ layui.define(['layer', 'element', 'form', 'treeGrid', 'jquery', 'table'], functi
   
   function del(data){
 	  
-	  alert(data.id)
-	  
 	  $.ajax({
 		  type: 'POST',  url: '/api/v1/sys/organization/del', dataType: "json", data: {'id':data.id, 'pid':data.pid},
 		  success: function(result) { 
 			  if(result.data.status){
-				  layer.msg('删除成功');  location.reload();
+				  layer.msg('删除成功');
 			  }else{
-				  layer.msg(result.data.message);
+				  layer.msg(result.message);
 			  }
+			  location.reload();
 		  }
 	  });
   }

@@ -58,7 +58,7 @@ public class BaseController {
 		
 		jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
 		
-		dataMap.put("data", object);
+		if(null==object) { dataMap.put("data", ""); } else { dataMap.put("data", object); };
 		
 		return JSONObject.fromObject(dataMap,jsonConfig).toString();
 		

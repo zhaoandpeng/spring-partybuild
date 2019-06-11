@@ -8,13 +8,16 @@ import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cn.wisdom.base.controller.BaseController;
 import com.cn.wisdom.info.model.InfoPartyArticle;
 import com.cn.wisdom.infomation.service.InformNoticeService;
+import com.cn.wisdom.utils.EventType;
 import com.cn.wisdom.utils.PageHelper;
 /**
  * @author MR.ZHAO
@@ -54,6 +57,8 @@ public class InformNoticeController extends BaseController{
 		
 		page.setOrderBy("orderNo");
 		
+		map.put("type", "0");
+		
 		page = informNoticeService.getListObjectPage(InfoPartyArticle.class, map, page);
 		
 		Stream<InfoPartyArticle> stream = page.getResult().stream();
@@ -61,6 +66,53 @@ public class InformNoticeController extends BaseController{
 		List<InfoPartyArticle> resultList= stream.filter((InfoPartyArticle model)-> !model.getStatus().equals("0")).collect(Collectors.toList());
 		
 		return toJson(resultList==null?null:resultList,resultList==null?0:resultList.size());
+	}
+	
+	@SuppressWarnings({ "rawtypes"})
+	@ResponseBody
+	@RequestMapping("/ajax/getList")
+	public String ajaxGetList() {
+		
+		String pageNo = getRequest().getParameter("page");
+		
+		String pageSize = getRequest().getParameter("limit");
+		
+		String status = getRequest().getParameter("status");
+		
+		String nodeId = getRequest().getParameter("nodeId"); //根据组织机构节点查询可查看的信息列表
+		
+		PageHelper page = new PageHelper();
+		
+		page.setPageNo(Integer.parseInt(pageNo));
+		
+		page.setPageSize(Integer.parseInt(pageSize));
+		
+		page.setOrderBy("orderNo");
+		
+		page = informNoticeService.getListPageByParam(status, nodeId, "0", page);
+		
+		return toJson(page.getResult()==null?null:page.getResult(),page.getResult()==null?0:page.getResult().size());
+	}
+	
+	@ResponseBody
+	@RequestMapping("/ajax/getObject")
+	public String ajaxGetObject() {
+		
+		String primaryKey = getRequest().getParameter("id");
+		
+		InfoPartyArticle infoPartyArticle = null;
+		
+		if(StringUtils.isNotBlank(primaryKey)) {
+			
+			try {
+				infoPartyArticle = informNoticeService.get(InfoPartyArticle.class, primaryKey);
+				
+			} catch (SQLException e) {
+				
+				return toJson(infoPartyArticle);
+			}
+		}
+		return toJson(infoPartyArticle);
 	}
 	
 	@ResponseBody
@@ -92,6 +144,22 @@ public class InformNoticeController extends BaseController{
 		 * this.baseDictionaryService.saveOrUpdate(model,EventType.EVENT_ADD);//执行新增操作 }
 		 * resultMap.put("status", global);
 		 */
+		return toJson(resultMap);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/del/{id}")
+	public String del(@PathVariable String id) throws SQLException {
+		boolean global = false;
+		ConcurrentHashMap<String,Object> resultMap = new ConcurrentHashMap<>();
+		if(StringUtils.isNotBlank(id)) {
+			 InfoPartyArticle infoPartyArticle = informNoticeService.get(InfoPartyArticle.class, id);
+			 if(null!=infoPartyArticle) {
+				 infoPartyArticle.setStatus("0");//逻辑删除
+				 global = informNoticeService.saveOrUpdate(infoPartyArticle, EventType.EVENT_UPDATE);
+			 }
+		}
+		resultMap.put("status", global);
 		return toJson(resultMap);
 	}
 }

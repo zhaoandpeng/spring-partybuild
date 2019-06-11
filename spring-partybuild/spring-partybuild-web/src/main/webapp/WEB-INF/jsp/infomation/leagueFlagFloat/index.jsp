@@ -7,40 +7,24 @@
 <title>团旗飘飘</title>
 <link rel="stylesheet" type="text/css" href="../../../../layui/css/layui.css">
 <link rel="stylesheet" type="text/css" href="../../../../css/main.css">
+<link rel="stylesheet" href="/layui.extend/modules/layui_ext/dtree/dtree.css">
+<link rel="stylesheet" href="/layui.extend/modules/layui_ext/dtree/font/dtreefont.css">
 <script type="text/javascript" src="../../../../layui/layui.js"></script>
 </head>
 <body class="layui-layout-body">
 
-	
 	<div class="layui-row">
 		<div class="layui-col-xs2">
-			<div class="grid-demo" id="org_tree"></div>
+			<div class="grid-demo" id="org_tree_view"></div>
 		</div>
 		<div class="layui-col-xs10">
 			<div class="grid-demo">
-				<!-- <form action="" class="layui-form layui-form-pane" >
-					<div class="layui-form-item">
-						<div class="layui-inline">
-							<label class="layui-form-label">验证手机</label>
-							<div class="layui-input-inline">
-								<input type="tel" name="phone" lay-verify="required|phone"
-									autocomplete="off" class="layui-input">
-							</div>
-						</div>
-						<div class="layui-inline">
-							<label class="layui-form-label">验证邮箱</label>
-							<div class="layui-input-inline">
-								<input type="text" name="email" lay-verify="email"
-									autocomplete="off" class="layui-input">
-							</div>
-						</div>
-					</div>
-				</form> -->
 				<span class="layui-breadcrumb "  lay-separator="|">
-				  <a class="layui-btn layui-btn-primary  layui-bg-orange layui-btn-xs">已发布</a>
-				  <a class="layui-btn layui-btn-primary  layui-btn-xs">审批中</a>
-				  <a class="layui-btn layui-btn-primary  layui-btn-xs">被驳回</a>
-				  <a class="layui-btn layui-btn-primary  layui-btn-xs">已删除</a>
+				  <a class="layui-btn layui-btn-primary  layui-bg-orange layui-btn-xs" status="">全部</a>
+				  <a class="layui-btn layui-btn-primary  layui-btn-xs" status="3">已发布</a>
+				  <a class="layui-btn layui-btn-primary  layui-btn-xs" status="2">审批中</a>
+				  <a class="layui-btn layui-btn-primary  layui-btn-xs" status="1">被驳回</a>
+				  <a class="layui-btn layui-btn-primary  layui-btn-xs" status="0">已删除</a>
 				</span>
 			</div>
 			<div class="grid-demo">
@@ -49,32 +33,60 @@
 		</div>
 	</div>
 
-
-	
-
-
-
-
-	<div id="div_item_code_tab" style="display: none">
-		<table class="layui-table" id="tab_item_code" lay-filter="item_code" lay-data="{id: 'itemCodeData'}"> </table>
-	</div>
-	
-	
 	<div id="toolbar" style="display: none" >
 		<button  class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe608;</i>新增</button>
 	</div>
 
 <script type="text/html" id="rowbar">
 
+  {{#  if(d.status =='2'||d.status =='1'){ }}
+  	
   	<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">详情</a>
 
   	<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
 
-	<a class="layui-btn layui-btn-xs" lay-event="his_read">阅览记录</a>
-
-	<a class="layui-btn layui-btn-xs" lay-event="his_audit">审批记录</a>
+  	<a class="layui-btn layui-btn-xs" lay-event="his_audit">审批记录</a>
 
   	<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+  	
+  {{#  } }}
+
+  {{#  if(d.status =='3'){ }}
+  	
+  	<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">详情</a>
+  	
+  	<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  	
+  	<a class="layui-btn layui-btn-xs" lay-event="his_audit">审批记录</a>
+  	
+  	<a class="layui-btn layui-btn-xs" lay-event="his_read">阅览记录</a>
+  {{#  } }}
+
+  {{#  if(d.status =='0'){ }}
+  	
+  	<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">详情</a>
+  	
+  	<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+
+  	<a class="layui-btn layui-btn-xs" lay-event="his_read">重新编辑并提交</a>
+  	
+  	<a class="layui-btn layui-btn-xs" lay-event="his_audit">审批记录</a>
+  	
+  {{#  } }}
+
+</script>
+
+<script type="text/html" id="statusTpl">
+
+  {{# if(d.status=='0'){ }}
+	 	已删除
+  {{# } else if(d.status=='1') { }}
+ 		被驳回
+  {{# } else if(d.status=='2') { }}
+     	审核中
+  {{# } else if(d.status=='3') { }}
+		已发布
+  {{# } }}
 
 </script>
 
@@ -98,81 +110,219 @@
 		  </div>
 		  <div class="layui-form-item" style="margin:0px 40px; margin-bottom:20px">
 		    <label class="layui-form-label layui-bg-green">审核人</label>
-		    <div class="layui-input-block">
-		      <input type="text" name="ITEM_CODE" required  lay-verify="required" class="layui-input">
+		    <div class="layui-input-block"><!--  style="width: 600px" -->
+		    	<div style="float:left;width:300px;height:450px;border:1px solid #CDC5BF;background-color: #CDC5BF;overflow-y:scroll;">
+		    		<ul id="org_tree" class="dtree" data-id="0"></ul>
+		    	</div>
+		    	<div style="float:left;width:300px;height:450px;border:1px solid #CDC5BF;">
+		    		<div style="background-color: #228B22;height: 40px;text-align: center;line-height:40px;color: white;"><h3>会员列表</h3></div>
+		    		<div style="overflow-y:scroll;height:410px;"></div>
+		    	</div>
 		    </div>
 		  </div>
 		  <div class="layui-form-item" style="margin:0px 40px; margin-bottom:20px">
 		    <label class="layui-form-label layui-bg-green">来源</label>
 		    <div class="layui-input-block">
-		      <input type="text" name="ITEM_NAME" class="layui-input">
+		      <input type="text" name="articleSource" class="layui-input">
 		    </div>
 		  </div>
 		  <div class="layui-form-item" style="margin:0px 40px; margin-bottom:20px">
 		    <label class="layui-form-label layui-bg-green">添加时间</label>
 		    <div class="layui-input-inline" style="width:272px;">
-		      <input type="text" name="ITEM_VALUE"  class="layui-input" id="add_time" readonly="readonly">
+		      <input type="text" name="createTime"  class="layui-input" id="add_time" readonly="readonly">
 		    </div>
 		  </div>
 		  <div class="layui-form-item" style="margin:0px 40px; margin-bottom:20px">
 		    <label class="layui-form-label layui-bg-green">内容</label>
-		    <textarea id="content" style="display: none;"></textarea>
+		    <textarea id="content" name="content" style="display: none;"></textarea>
 		  </div>
 		  <div class="layui-form-item" style="margin:0px 40px; margin-bottom:20px">
 		    <label class="layui-form-label layui-bg-green">是否必读</label>
 		    <div class="layui-input-inline">
-		      	<select name="IS_READ" lay-verify="required" class="is_read" lay-filter="addIsRead"></select>
+		      	<select name="isRead" lay-verify="required" class="is_read"></select>
 		    </div>
 		  </div>
 		  <div class="layui-form-item" style="margin:0px 40px; margin-bottom:20px">
 		    <label class="layui-form-label layui-bg-green">下发机构</label>
-		    <div class="layui-input-block">
-		      	
-		    </div>
+		    <div class="layui-input-block" style="padding-left: 2px">
+				<div class="layui-col-lg5" style="border:1px solid #CDC5BF;">
+					<div class="layui-card">
+						<div class="layui-card-header" style="background-color: #228B22;text-align: center;color: white;">请选择接收机构</div>
+						<div class="layui-card-body">
+							<div style="height: 350px; overflow: auto;">
+								<ul id="cskTree1" class="dtree" data-id="0"></ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="layui-col-lg2">
+					<div style="height: 350px;">
+						<button class="layui-btn layui-btn-normal" style="margin:180px 0px 0px 7px;" id="csk_btn">设置选中</button>
+					</div>
+				</div>
+				<div class="layui-col-lg5" style="border:1px solid #CDC5BF;">
+					<div class="layui-card">
+						<div class="layui-card-header" style="background-color: #228B22;text-align: center;color: white;">已选择机构</div>
+						<div class="layui-card-body">
+							<div style="height: 350px; overflow: auto;">
+								<ul id="cskTree2" class="dtree" data-id="0"></ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		  </div>
 		  <button lay-submit lay-filter="addform" id="add_form_submit" class="layui-hide">提交</button>
 </form>
 
-<!-- <form class="layui-form layui-form-pane" id="modify_form" lay-filter="modify_form" style="display: none;padding-top: 30px">
-		  <input type="text" name="ID" required  lay-verify="required" class="layui-input layui-hide">
-		  <div class="layui-form-item" style="margin-left: 120px">
-		    <label class="layui-form-label layui-bg-green">上级选项码</label>
-		    <div class="layui-input-block" style="width:300px;">
-		      <input type="text" name="PARENT_ITEM_CODE" required  lay-verify="required" value="0" class="layui-input"><button style="position: absolute;top: 0;right: 1px; cursor: pointer;" type="button" class="layui-btn btn_item_code" value="modify">选择</button>
-		      <input type="text" name="PID" required  value="0" lay-verify="required" class="layui-input layui-hide">
+<form class="layui-form layui-form-pane" id="modify_form" lay-filter="modify_form" style="display: none;padding-top: 30px">
+		  <input type="text" name="id" required  lay-verify="required" class="layui-input layui-hide">
+		  <div class="layui-form-item" style="margin:0px 40px; margin-bottom:20px">
+		    <label class="layui-form-label layui-bg-green">标题</label>
+		    <div class="layui-input-block">
+		      <input type="text" name="title" required  lay-verify="required" class="layui-input">
 		    </div>
 		  </div>
-		  <div class="layui-form-item" style="margin-left: 120px">
-		    <label class="layui-form-label layui-bg-green">选项码</label>
-		    <div class="layui-input-block" style="width:300px;">
-		      <input type="text" name="ITEM_CODE" required  lay-verify="required" class="layui-input">
+		  <div class="layui-form-item" style="margin:0px 40px; margin-bottom:20px">
+		    <label class="layui-form-label layui-bg-green">审核人</label>
+		    <div class="layui-input-block">
+		    	<div style="float:left;width:300px;height:450px;border:1px solid #CDC5BF;background-color: #CDC5BF;overflow-y:scroll;">
+		    		<ul id="org_tree" class="dtree" data-id="0"></ul>
+		    	</div>
+		    	<div style="float:left;width:300px;height:450px;border:1px solid #CDC5BF;">
+		    		<div style="background-color: #228B22;height: 40px;text-align: center;line-height:40px;color: white;"><h3>会员列表</h3></div>
+		    		<div style="overflow-y:scroll;height:410px;"></div>
+		    	</div>
 		    </div>
 		  </div>
-		  <div class="layui-form-item" style="margin-left: 120px">
-		    <label class="layui-form-label layui-bg-green">选项名称</label>
-		    <div class="layui-input-block" style="width:300px;">
-		      <input type="text" name="ITEM_NAME" class="layui-input">
+		  <div class="layui-form-item" style="margin:0px 40px; margin-bottom:20px">
+		    <label class="layui-form-label layui-bg-green">来源</label>
+		    <div class="layui-input-block">
+		      <input type="text" name="articleSource" class="layui-input">
 		    </div>
 		  </div>
-		  <div class="layui-form-item" style="margin-left: 120px">
-		    <label class="layui-form-label layui-bg-green">选项值</label>
-		    <div class="layui-input-block" style="width:300px;">
-		      <input type="text" name="ITEM_VALUE"  class="layui-input">
+		  <div class="layui-form-item" style="margin:0px 40px; margin-bottom:20px">
+		    <label class="layui-form-label layui-bg-green">添加时间</label>
+		    <div class="layui-input-inline" style="width:272px;">
+		      <input type="text" name="createTime"  class="layui-input" id="modify_time" readonly="readonly">
 		    </div>
 		  </div>
-		  <div class="layui-form-item" style="margin-left: 120px">
-		    <label class="layui-form-label layui-bg-green">状态</label>
-		    <div class="layui-input-block status" style="width:300px;">
+		  <div class="layui-form-item" style="margin:0px 40px; margin-bottom:20px">
+		    <label class="layui-form-label layui-bg-green">内容</label>
+		    <textarea id="modifyContent" name="content" style="display: none;"></textarea>
+		  </div>
+		  <div class="layui-form-item" style="margin:0px 40px; margin-bottom:20px">
+		    <label class="layui-form-label layui-bg-green">是否必读</label>
+		    <div class="layui-input-inline">
+		      	<select name="isRead" lay-verify="required" class="is_read"></select>
 		    </div>
 		  </div>
-		  <div class="layui-form-item" style="margin-left: 120px">
-		    <label class="layui-form-label layui-bg-green">描述</label>
-		    <div class="layui-input-block" style="width:300px;">
-		      <input type="text" name="REMARK"  class="layui-input"></input>
-		    </div>
-		  </div>
+		  <!-- <div class="layui-form-item" style="margin:0px 40px; margin-bottom:20px">
+		    <label class="layui-form-label layui-bg-green">下发机构</label>
+		    <div class="layui-input-block" style="padding-left: 2px">
+				<div class="layui-col-lg5" style="border:1px solid #CDC5BF;">
+					<div class="layui-card">
+						<div class="layui-card-header" style="background-color: #228B22;text-align: center;color: white;">请选择接收机构</div>
+						<div class="layui-card-body">
+							<div style="height: 350px; overflow: auto;">
+								<ul id="cskTree1" class="dtree" data-id="0"></ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="layui-col-lg2">
+					<div style="height: 350px;">
+						<button class="layui-btn layui-btn-normal" style="margin:180px 0px 0px 7px;" id="csk_btn">设置选中</button>
+					</div>
+				</div>
+				<div class="layui-col-lg5" style="border:1px solid #CDC5BF;">
+					<div class="layui-card">
+						<div class="layui-card-header" style="background-color: #228B22;text-align: center;color: white;">已选择机构</div>
+						<div class="layui-card-body">
+							<div style="height: 350px; overflow: auto;">
+								<ul id="cskTree2" class="dtree" data-id="0"></ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		  </div> -->
 		  <button lay-submit lay-filter="modifyform" id="modify_form_submit" class="layui-hide">提交</button>
-</form> -->
+</form>
+
+<div class="layui-card detail" style="display: none;overflow: auto">
+	<div class="layui-card-body" style="height: 580px;">
+		<form class="layui-form detail_form" action="" lay-filter="detail_form">
+			<div class="layui-form-item">
+				<label class="layui-form-label">添加时间</label>
+				<div class="layui-input-block">
+					<input type="text" name="createTime"  readonly="readonly"  class="layui-input createTime">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">更新时间</label>
+				<div class="layui-input-block">
+					<input type="text" name="updateTime" readonly="readonly"   class="layui-input updateTime">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">浏览数量</label>
+				<div class="layui-input-block">
+					<input type="text" name="readCount" readonly="readonly" value="0"  class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">标题</label>
+				<div class="layui-input-block">
+					<input type="text" name="title" readonly="readonly" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">发布人</label>
+				<div class="layui-input-block">
+					<input type="text" name="createName" readonly="readonly" value="0"  class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">审核人</label>
+				<div class="layui-input-block">
+					<input type="text" name="checkerName" readonly="readonly" value="0"  class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">来源</label>
+				<div class="layui-input-block">
+					<input type="text" name="articleSource" readonly="readonly" value="0"  class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">状态</label>
+				<div class="layui-input-block">
+					<input type="text" name="readCount" readonly="readonly" value="0"  class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否必读</label>
+				<div class="layui-input-block">
+					<input type="text" name="isRead" readonly="readonly" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">下发组织机构</label>
+				<div class="layui-input-block">
+					<input type="text" name="readCount" readonly="readonly" value="0"  class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">正文</label>
+				<div class="layui-input-block">
+					<textarea id="detail_content" name="content" readonly="readonly" class="layui-textarea"></textarea>
+				</div>
+			</div>
+			
+		</form>
+	</div>
+</div>
 
 <div class="layui-card hisread" style="display: none">
 	<div class="layui-card-header" style="height: 70px;">

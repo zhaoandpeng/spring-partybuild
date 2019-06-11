@@ -25,30 +25,6 @@ layui.define(['layer', 'element', 'jquery', 'table',  'iconPicker', 'form', 'sli
 	    }
   });
   
-  iconPicker.render({
-	  elem: '#iconPicker_modify',// 选择器，推荐使用input
-//	  elem: '#iconPicker2',// 选择器，推荐使用input
-	  type: 'fontClass',// 数据类型：fontClass/unicode，推荐使用fontClass
-	  search: false,// 是否开启搜索：true/false，默认true
-	  page: false// 是否开启分页：true/false，默认true
-//	  limit: 20// 每页显示数量，默认12
-	  /*click: function (data) {
-          $('#add_form input[name="orderNo"]').val(data.icon);
-      }*/
-  });
-  
-  iconPicker.render({
-      elem: '#iconPicker_add',// 选择器，推荐使用input
-//      elem: '#iconPicker1',// 选择器，推荐使用input
-      type: 'fontClass',// 数据类型：fontClass/unicode，推荐使用fontClass
-      search: false,// 是否开启搜索：true/false，默认true
-      page: true,// 是否开启分页：true/false，默认true
-      limit: 20// 每页显示数量，默认12
-      /*click: function (data) {
-          $('#add_form input[name="orderNo"]').val(data.icon);
-      }*/
-  });
-  
   var add_slider = slider.render({
 	  elem: '#slideOrderNo_add',
 	  value: 0, //初始值
@@ -110,6 +86,15 @@ layui.define(['layer', 'element', 'jquery', 'table',  'iconPicker', 'form', 'sli
 					  }
 				  }
 			  });
+			  
+			  iconPicker.render({
+			      elem: '#iconPicker_add',// 选择器，推荐使用input
+			      type: 'fontClass',// 数据类型：fontClass/unicode，推荐使用fontClass
+			      search: false,// 是否开启搜索：true/false，默认true
+			      page: true,// 是否开启分页：true/false，默认true
+			      limit: 20// 每页显示数量，默认12
+			  });
+			  
 			  $(".layui-slider-input").css('margin-top','15px')
 		  },
 		  end:function(){
@@ -147,7 +132,6 @@ layui.define(['layer', 'element', 'jquery', 'table',  'iconPicker', 'form', 'sli
 		  skin: 'demo-class',
 		  content: $('#modify_form'),
 		  yes:function(index,layero){
-			  
 			  $("#modify_form_submit").trigger("click");
 		  },
 		  success:function(){
@@ -158,11 +142,22 @@ layui.define(['layer', 'element', 'jquery', 'table',  'iconPicker', 'form', 'sli
 						  $.each(result.data,function(index,value){
 							  if(value.PID !='0'){ return true; }
 							  var option =new Option(value.MENU_NAME,value.ID);
-							  $('[name="PID"]').append(option);
-							  form.render();
+							  $('#modify_form .modify_pid').append(option);
+							  if(data[0].ID==value.ID){
+								  $('.modify_pid').val(value.ID);
+							  }
+							  form.render('select');
 						  })
 					  }
 				  }
+			  });
+			  
+			  iconPicker.render({
+				  elem: '#iconPicker_modify',// 选择器，推荐使用input
+				  type: 'fontClass',// 数据类型：fontClass/unicode，推荐使用fontClass
+				  search: false,// 是否开启搜索：true/false，默认true
+				  page: true,// 是否开启分页：true/false，默认true
+				  limit: 12// 每页显示数量，默认12
 			  });
 			  
 			  $(".layui-slider-input").css('margin-top','15px')
