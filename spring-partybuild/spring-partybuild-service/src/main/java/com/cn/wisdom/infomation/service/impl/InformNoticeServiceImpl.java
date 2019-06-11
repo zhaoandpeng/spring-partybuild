@@ -17,6 +17,7 @@ import com.cn.wisdom.base.service.impl.BaseServiceImpl;
 import com.cn.wisdom.info.model.InfoPartyArticle;
 import com.cn.wisdom.infomation.service.InformNoticeService;
 import com.cn.wisdom.utils.EventType;
+import com.cn.wisdom.utils.PageHelper;
 @Service
 public class InformNoticeServiceImpl  extends BaseServiceImpl<InfoPartyArticle,java.lang.String> implements InformNoticeService{
 	
@@ -78,7 +79,7 @@ public class InformNoticeServiceImpl  extends BaseServiceImpl<InfoPartyArticle,j
 		model.setCreateName(baseUser.getUsername());
 		model.setCreateUserNo(baseUser.getUsername());
 		model.setContent(content);
-		model.setRead(read);
+		model.setIsRead(read);
 		model.setReceiveOrgId("");
 //		model.setStatus("");
 		model.setType(type);
@@ -87,6 +88,27 @@ public class InformNoticeServiceImpl  extends BaseServiceImpl<InfoPartyArticle,j
 		
 		return global;
 		
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public PageHelper getListPageByParam(String status, String nodeId, String type, PageHelper page) {
+		
+		StringBuffer buffer = new StringBuffer("select * from info_partyarticle where type = '").append(type+"'");
+		
+		if(StringUtils.isNotBlank(status)) {
+			
+			buffer.append(" and status = '"+status+"'");
+		}
+		
+		if(StringUtils.isNotBlank(nodeId)) {
+			
+			buffer.append(" and find_in_set( '").append(nodeId).append("', receiveOrgId)");
+		}
+		
+		PageHelper listModel = super.getListObjectPageBySql(InfoPartyArticle.class, buffer.toString(), page);
+		
+		return listModel;
 	}
 
 }

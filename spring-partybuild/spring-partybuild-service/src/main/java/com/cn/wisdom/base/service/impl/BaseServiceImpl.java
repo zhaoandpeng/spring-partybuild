@@ -62,4 +62,10 @@ public class BaseServiceImpl<T, K> implements BaseService<T,java.lang.String>{
 		return baseDao.deleteBatchByPrimary(clazz, list);
 	}
 
+	@Override
+	public PageHelper<T> getListObjectPageBySql(Class<T> clazz, String buffSql, PageHelper<T> pageModel) {
+	
+		return baseDao.getListObjectPageBySql(clazz, buffSql, pageModel);
+	}
+
 }

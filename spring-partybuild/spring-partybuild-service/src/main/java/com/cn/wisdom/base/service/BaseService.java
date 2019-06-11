@@ -31,5 +31,5 @@ public interface BaseService<T, K extends Serializable> {
 	public abstract int deleteBatchByPrimary(final Class<T> clazz, List<K> list);
 	
 	
-	
+	public abstract PageHelper<T> getListObjectPageBySql(Class<T> clazz, String buffSql, PageHelper<T> pageModel );
  }
