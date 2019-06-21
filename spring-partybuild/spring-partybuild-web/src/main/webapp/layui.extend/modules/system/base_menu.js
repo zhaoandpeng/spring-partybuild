@@ -1,44 +1,32 @@
 layui.define(['layer', 'element', 'jquery', 'table',  'iconPicker', 'form', 'slider'], function(exports){  
   
 	
-  var layer = layui.layer, element = layui.element, $ = layui.jquery,  table = layui.table,  form = layui.form,  iconPicker = layui.iconPicker, slider = layui.slider; 
+  var layer = layui.layer, element = layui.element, $ = layui.jquery,  table = layui.table,  iconPicker = layui.iconPicker,  form = layui.form; 
   
   var tableIns = table.render({
 	  	id:'mainData',
 	    elem: '#demo',
 	    skin:'row',
 	    even:true,
+	    height: 670,
 	    toolbar:'#toolbar',
 	    url: '/api/v1/sys/menu/index/view',
 	    page: true ,
 	    cols: [[ 
 	    	{checkbox: true,fixed: 'left'},
-	    	{field: 'MENU_NAME', title: '菜单名称', width:150, align: 'center'},
-	    	{field: 'MENU_URL', title: '菜单链接', width:400, align: 'center'},
-	    	{field: 'MENU_ICON', title: '菜单图标', width:150, align: 'center'},
-	    	{field: 'ORDER_NO', title: '权重', width:150, align: 'center'},
-	    	{field: 'CREATOR_NAME', title: '创建人', width:150, align: 'center'},
-	    	{field: 'CREATE_DATE', title: '创建时间', width:180, align: 'center'}
+	    	{field: 'menuName', title: '菜单名称', width:150, align: 'center'},
+	    	{field: 'menuUrl', title: '菜单链接', width:400, align: 'center'},
+	    	{field: 'menuIcon', title: '菜单图标', width:150, align: 'center',
+	    		templet: function(d){
+	    			return "<i class='layui-icon "+d.menuIcon+"' ></i>"
+	    		}
+	    	},
+	    	{field: 'creatorName', title: '创建人', width:150, align: 'center'},
+	    	{field: 'createDate', title: '创建时间', width:180, align: 'center'}
 	    ]],
 	    done : function(){
 	       $('th').css({'background-color': '#009688', 'color': '#fff','font-weight':'bold'})
 	    }
-  });
-  
-  var add_slider = slider.render({
-	  elem: '#slideOrderNo_add',
-	  value: 0, //初始值
-	  max:100,
-	  input: true, //输入框
-	  theme: '#FF5722'
-  });
-  
-  var modify_slider = slider.render({
-	  elem: '#slideOrderNo_modify',
-	  value: 0, //初始值
-	  max:100,
-	  input: true, //输入框
-	  theme: '#FF5722'
   });
   
   table.on('toolbar(operate)', function(obj){
@@ -66,21 +54,31 @@ layui.define(['layer', 'element', 'jquery', 'table',  'iconPicker', 'form', 'sli
 		  content: $('#add_form'),
 		  yes:function(index,layero){
 			  
-			  var orderNo = $(".demo-slider .layui-slider-input .layui-slider-input-txt .layui-input").val();
-			 
-			  $('#add_form input[name="ORDER_NO"]').val(orderNo);
-			  
 			  $("#add_form_submit").trigger("click");
 		  },
 		  success:function(){
+			  
 			  $.ajax({
 				  type: 'POST',  url: '/api/v1/sys/menu/list/view', dataType : "json",
 				  success: function(result) { 
 					  if(result.data.length>0){
 						  $.each(result.data,function(index,value){
-							  if(value.PID !='0'){ return true; }
-							  var option =new Option(value.MENU_NAME,value.ID);
-							  $('[name="PID"]').append(option);
+							  if(value.pid !='0'){ return true; }
+							  var option =new Option(value.menuName,value.id);
+							  $('#add_form .pid').append(option);
+							  form.render('select');
+						  })
+					  }
+				  }
+			  });
+			  
+			  $.ajax({
+				  type: 'POST',  url: '/api/v1/sys/dict/get/item/list/enable_disable_mark', dataType : "json",
+				  success: function(result) { 
+					  if(result.data.length>0){
+						  $.each(result.data,function(index,value){
+							  var option =new Option(value.ITEM_NAME,value.ITEM_VALUE);
+							  $('#add_form .is_disabled').append(option);
 							  form.render('select');
 						  })
 					  }
@@ -88,14 +86,13 @@ layui.define(['layer', 'element', 'jquery', 'table',  'iconPicker', 'form', 'sli
 			  });
 			  
 			  iconPicker.render({
-			      elem: '#iconPicker_add',// 选择器，推荐使用input
-			      type: 'fontClass',// 数据类型：fontClass/unicode，推荐使用fontClass
-			      search: false,// 是否开启搜索：true/false，默认true
-			      page: true,// 是否开启分页：true/false，默认true
-			      limit: 20// 每页显示数量，默认12
+			      elem: '#iconPicker_add',
+			      type: 'fontClass',
+			      search: false,
+			      page: true,
+			      limit: 20,
 			  });
 			  
-			  $(".layui-slider-input").css('margin-top','15px')
 		  },
 		  end:function(){
 			  location.reload();
@@ -121,8 +118,6 @@ layui.define(['layer', 'element', 'jquery', 'table',  'iconPicker', 'form', 'sli
 	  
 	  form.val('modify_form', data[0]);
 	  
-	  modify_slider.setValue(data[0].ORDER_NO);
-	 
 	  var modify = layer.open({ 
 		  type: 1, title:"修改菜单",
 		  resize : false,
@@ -135,40 +130,68 @@ layui.define(['layer', 'element', 'jquery', 'table',  'iconPicker', 'form', 'sli
 			  $("#modify_form_submit").trigger("click");
 		  },
 		  success:function(){
+			  
+			  if(data[0].pid==0){
+//				  $("#modify_form div.layui-form-item:eq(3)").hide()
+			  }else{
+				  $.ajax({
+					  type: 'POST',  url: '/api/v1/sys/menu/list/view', dataType : "json",
+					  success: function(result) { 
+						  if(result.data.length>0){
+							  $.each(result.data,function(index,value){
+								  if(value.pid !='0'){ return true; }
+								  var option =new Option(value.menuName,value.id);
+								  $('#modify_form .modify_pid').append(option);
+								  if(data[0].pid==value.id){
+									  $('#modify_form .modify_pid').val(value.id);
+								  }
+							  })
+							  form.render('select');
+						  }
+					  }
+				  });
+			  }
+			  
 			  $.ajax({
-				  type: 'POST',  url: '/api/v1/sys/menu/list/view', dataType : "json",
+				  type: 'POST',  url: '/api/v1/sys/dict/get/item/list/enable_disable_mark', dataType : "json",
 				  success: function(result) { 
 					  if(result.data.length>0){
 						  $.each(result.data,function(index,value){
-							  if(value.PID !='0'){ return true; }
-							  var option =new Option(value.MENU_NAME,value.ID);
-							  $('#modify_form .modify_pid').append(option);
-							  if(data[0].ID==value.ID){
-								  $('.modify_pid').val(value.ID);
+							  var option =new Option(value.ITEM_NAME,value.ITEM_VALUE);
+							  $('#modify_form .is_disabled').append(option);
+							  if(data[0].isDisabled==value.ITEM_VALUE){
+								  $('#modify_form .is_disabled').val(value.ITEM_VALUE);
 							  }
-							  form.render('select');
 						  })
+						  form.render('select');
 					  }
 				  }
 			  });
-			  
-			  iconPicker.render({
-				  elem: '#iconPicker_modify',// 选择器，推荐使用input
-				  type: 'fontClass',// 数据类型：fontClass/unicode，推荐使用fontClass
-				  search: false,// 是否开启搜索：true/false，默认true
-				  page: true,// 是否开启分页：true/false，默认true
-				  limit: 12// 每页显示数量，默认12
-			  });
-			  
-			  $(".layui-slider-input").css('margin-top','15px')
 		  },
 		  end:function(){
 			  location.reload();
 		  }
 	  });
 	  
+	  iconPicker.render({
+		  elem: '#iconPicker_modify',
+		  type: 'fontClass',
+		  search: false,
+		  page: true,
+		  limit: 12,
+		  click: function (data) {
+			   console.log(data.icon)
+               iconPicker.checkIcon('iconPicker2', data.icon);
+          }
+	  });
+	  
+	  iconPicker.checkIcon('iconPicker2', data[0].menuIcon);
+	  
 	  form.on('submit(modifyform)', function(data){
-		  $.ajax({
+		  
+		  console.log(data.field)
+		  
+		  /*$.ajax({
 			  type: 'POST',  url: '/api/v1/sys/menu/add_or_update', dataType : "json", data: data.field,
 			  success: function(result) { 
 				  if(result.data.status){
@@ -177,7 +200,7 @@ layui.define(['layer', 'element', 'jquery', 'table',  'iconPicker', 'form', 'sli
 					  layer.msg(result.data.message);
 				  }
 			  }
-		  });
+		  });*/
 		  return false;
 	  });
 	  
@@ -189,7 +212,7 @@ layui.define(['layer', 'element', 'jquery', 'table',  'iconPicker', 'form', 'sli
 	  
 	  $.each(data,function(index,value){
 		  
-		  ids.push(value.ID);
+		  ids.push(value.id);
 	  })
 	  $.ajax({
 		  type: 'POST',  url: '/api/v1/sys/menu/delete/'+ids.join(','), dataType : "json",

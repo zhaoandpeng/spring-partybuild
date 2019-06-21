@@ -120,13 +120,13 @@ public class BaseMenuController extends BaseController{
 				
 				JSONObject node = new JSONObject();
 				
-				node.put("id", model.getID());
+				node.put("id", model.getId());
 				
-				node.put("pId", model.getPID());
+				node.put("pId", model.getPid());
 				
-				node.put("name", model.getMENU_NAME());
+				node.put("name", model.getMenuName());
 				
-				if(menusListId.contains(model.getID())) {
+				if(menusListId.contains(model.getId())) {
 					
 					node.put("checked", true);
 				}
@@ -142,34 +142,34 @@ public class BaseMenuController extends BaseController{
 	public String add_or_update() throws SQLException {
 		boolean global = false;
 		ConcurrentHashMap<String,Object> resultMap = new ConcurrentHashMap<>();
-		String id = getRequest().getParameter("ID");
-		String menuName = getRequest().getParameter("MENU_NAME");
-		String menuUrl = getRequest().getParameter("MENU_URL");
-		String menuIcon = getRequest().getParameter("MENU_ICON");
-		String pid = getRequest().getParameter("PID");
-		String orderNo = getRequest().getParameter("ORDER_NO");
+		String id = getRequest().getParameter("id");
+		String menuName = getRequest().getParameter("menuName");
+		String menuUrl = getRequest().getParameter("menuUrl");
+		String menuIcon = getRequest().getParameter("menuIcon");
+		String pid = getRequest().getParameter("pid");
+		String isDisabled = getRequest().getParameter("isDisabled");
 		if(!StringUtil.isNullOrEmpty(id)) {
 			BaseMenu model = baseMenuService.get(BaseMenu.class, id);
 			if(null!=model) {
-				model.setPID(pid);
-				model.setMENU_NAME(menuName);
-				model.setMENU_URL(menuUrl);
-				model.setMENU_ICON(menuIcon);
-				model.setORDER_NO(Integer.parseInt(orderNo));
+				model.setPid(pid);
+				model.setMenuName(menuName);
+				model.setMenuUrl(menuUrl);
+				model.setMenuIcon(menuIcon);
+				model.setIsDisabled(isDisabled);
 				global = this.baseMenuService.saveOrUpdate(model,EventType.EVENT_UPDATE);//执行更新操作
 			}
 		}else {
 			BaseUser user = getCurrentBaseUser();
 			BaseMenu model = new BaseMenu();
-			model.setID(UUID.randomUUID().toString());
-			model.setPID(pid);
-			model.setMENU_NAME(menuName);
-			model.setMENU_URL(menuUrl);
-			model.setMENU_ICON(menuIcon);
-			model.setORDER_NO(Integer.parseInt(orderNo));
-			model.setCREATE_DATE(new Date());
-			model.setCREATOR_ID(user.getId());
-			model.setCREATOR_NAME(user.getUsername());
+			model.setId(UUID.randomUUID().toString());
+			model.setPid(pid);
+			model.setMenuName(menuName);
+			model.setMenuUrl(menuUrl);
+			model.setMenuIcon(menuIcon);
+			model.setIsDisabled(isDisabled);
+			model.setCreateDate(new Date());
+			model.setCreatorId(user.getId());
+			model.setCreatorName(user.getUsername());
 			global = this.baseMenuService.saveOrUpdate(model,EventType.EVENT_ADD);//执行新增操作
 		}
 		resultMap.put("status", global);

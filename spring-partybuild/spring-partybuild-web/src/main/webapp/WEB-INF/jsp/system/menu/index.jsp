@@ -10,8 +10,9 @@
 <script type="text/javascript" src="../../../../layui/layui.js"></script>
 </head>
 <body class="layui-layout-body">
+
+	<table class="layui-table" id="demo" lay-filter="operate" lay-data="{id: 'mainData'}"  > </table>
 	
-	<table class="layui-table" id="demo" lay-filter="operate" lay-data="{id: 'mainData'}"> </table>
 
 	<div id="toolbar" style="display: none" >
 		<button  class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe608;</i>新增</button>
@@ -32,40 +33,40 @@
 		  <div class="layui-form-item" style="margin-left: 120px">
 		    <label class="layui-form-label layui-bg-green">菜单名称</label>
 		    <div class="layui-input-block" style="width:300px;">
-		      <input type="text" name="MENU_NAME" required  lay-verify="required" class="layui-input">
+		      <input type="text" name="menuName" required  lay-verify="required" class="layui-input">
 		    </div>
 		  </div>
 		  <div class="layui-form-item" style="margin-left: 120px">
 		    <label class="layui-form-label layui-bg-green">菜单链接</label>
 		    <div class="layui-input-block" style="width:300px;">
-		      <input type="text" name="MENU_URL" required  lay-verify="required" class="layui-input">
-		    </div>
-		  </div>
-		  <div class="layui-form-item" style="margin-left: 120px">
-		    <label class="layui-form-label layui-bg-green">菜单图标</label>
-		    <div class="layui-input-block" style="width:300px;">
-		      <input type="text" name="MENU_ICON" required  lay-verify="required" class="layui-input" id="iconPicker_add" lay-filter="iconPicker1">
+		      <input type="text" name="menuUrl" required  lay-verify="required" class="layui-input">
 		    </div>
 		  </div>
 		  <div class="layui-form-item" style="margin-left: 120px">
 		    <label class="layui-form-label layui-bg-green">父级菜单</label>
 		    <div class="layui-input-block" style="width:300px;">
-		      <select type="text" name="PID" required  lay-verify="required" class="layui-select" ></select>
+		      <select type="text" name="pid" required  lay-verify="required" class="layui-select pid" ></select>
 		    </div>
 		  </div>
-		  <div class="layui-form-item" style="margin-left: 120px">
+		  <!-- <div class="layui-form-item" style="margin-left: 120px">
 		    <label class="layui-form-label layui-bg-green">排序编号</label>
 		    <div class="layui-input-block" style="width:300px;">
 		      <input type="text" name="ORDER_NO" required  lay-verify="required" class="layui-input layui-hide">
 		      <div id="slideOrderNo_add" class="demo-slider" style="padding-top:15px;padding-left: 10px"></div>
 		    </div>
-		  </div>
-		  <!-- <div class="layui-form-item" style="margin-left: 120px">
+		  </div> -->
+		  <div class="layui-form-item" style="margin-left: 120px">
 		    <label class="layui-form-label layui-bg-green">是否启用</label>
 		    <div class="layui-input-block" style="width:300px;">
-		      <select type="text" name="isDisabled" required  lay-verify="required" class="layui-select"></select>
+		      <select type="text" name="isDisabled" required  lay-verify="required" class="layui-select is_disabled"></select>
 		    </div>
-		  </div> -->
+		  </div>
+		  <div class="layui-form-item" style="margin-left: 120px">
+		    <label class="layui-form-label layui-bg-green">菜单图标</label>
+		    <div class="layui-input-block" style="width:300px;">
+		      <input type="text" name="menuIcon" required  lay-verify="required" class="layui-input" id="iconPicker_add" lay-filter="iconPicker1">
+		    </div>
+		  </div>
 		  <button lay-submit lay-filter="addform" id="add_form_submit" class="layui-hide">提交</button>
 </form>
 
@@ -73,46 +74,46 @@
 		  <div class="layui-form-item layui-hide" style="margin-left: 120px">
 		    <label class="layui-form-label layui-bg-green">菜单主键</label>
 		    <div class="layui-input-block" style="width:300px;">
-		      <input type="text" name="ID" required  lay-verify="required" class="layui-input">
+		      <input type="text" name="id" required  lay-verify="required" class="layui-input">
 		    </div>
 		  </div>
 		  <div class="layui-form-item" style="margin-left: 120px">
 		    <label class="layui-form-label layui-bg-green">菜单名称</label>
 		    <div class="layui-input-block" style="width:300px;">
-		      <input type="text" name="MENU_NAME" required  lay-verify="required" class="layui-input">
+		      <input type="text" name="menuName" required  lay-verify="required" class="layui-input">
 		    </div>
 		  </div>
 		  <div class="layui-form-item" style="margin-left: 120px">
 		    <label class="layui-form-label layui-bg-green">菜单链接</label>
 		    <div class="layui-input-block" style="width:300px;">
-		      <input type="text" name="MENU_URL" required  lay-verify="required" class="layui-input">
+		      <input type="text" name="menuUrl" required  lay-verify="required" class="layui-input">
 		    </div>
 		  </div>
-		  <div class="layui-form-item" style="margin-left: 120px">
-		    <label class="layui-form-label layui-bg-green">菜单图标</label>
-		    <div class="layui-input-block" style="width:300px;">
-		      <input type="text" name="MENU_ICON" required  lay-verify="required" class="layui-input" id="iconPicker_modify" lay-filter="iconPicker2">
-		    </div>
-		  </div>
-		  <div class="layui-form-item" style="margin-left: 120px">
+		  <!-- <div class="layui-form-item" style="margin-left: 120px">
 		    <label class="layui-form-label layui-bg-green">父级菜单</label>
 		    <div class="layui-input-block" style="width:300px;">
-		      <select type="text" name="PID" required  lay-verify="required" class="layui-select modify_pid" ></select>
+		      <select type="text" name="pid"  class="layui-select modify_pid" ></select>required  lay-verify="required"
 		    </div>
-		  </div>
-		  <div class="layui-form-item" style="margin-left: 120px">
+		  </div> -->
+		  <!-- <div class="layui-form-item" style="margin-left: 120px">
 		    <label class="layui-form-label layui-bg-green">排序编号</label>
 		    <div class="layui-input-block" style="width:300px;">
 		      <input type="text" name="ORDER_NO" required  lay-verify="required" class="layui-input layui-hide">
 		      <div id="slideOrderNo_modify" class="demo-slider" style="padding-top:15px;padding-left: 10px"></div>
 		    </div>
-		  </div>
-		  <!-- <div class="layui-form-item" style="margin-left: 120px">
+		  </div> -->
+		  <div class="layui-form-item" style="margin-left: 120px">
 		    <label class="layui-form-label layui-bg-green">是否启用</label>
 		    <div class="layui-input-block" style="width:300px;">
-		      <select type="text" name="isDisabled" required  lay-verify="required" class="layui-select"></select>
+		      <select type="text" name="isDisabled" required  lay-verify="required" class="layui-select is_disabled"></select>
 		    </div>
-		  </div> -->
+		  </div>
+		  <div class="layui-form-item" style="margin-left: 120px">
+		    <label class="layui-form-label layui-bg-green">菜单图标</label>
+		    <div class="layui-input-block" style="width:300px;">
+		      <input type="text" name="menuIcon" required  lay-verify="required" class="layui-input" id="iconPicker_modify" lay-filter="iconPicker2">
+		    </div>
+		  </div>
 		  <button lay-submit lay-filter="modifyform" id="modify_form_submit" class="layui-hide">提交</button>
 </form>
 

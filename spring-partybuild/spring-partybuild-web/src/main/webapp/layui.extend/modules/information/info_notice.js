@@ -173,6 +173,14 @@ layui.define(['layer', 'element', 'laydate', 'layedit', 'jquery', 'table', 'dtre
 		  dtree.reload("rightTree",{data:param});
 	  });
 	  
+	  /*$("#cancel_btn").click(function(){
+		  var param = dtree.getCheckbarNodesParam("leftTree");  // 获取选中数据
+		  if(param.length == 0) {
+			  layer.msg("请至少选择一个节点");
+		  }
+		  dtree.reload("rightTree",{data:param});
+	  });*/
+	  
 	  form.on('submit(addform)', function(data){
 		  $.ajax({
 			  type: 'POST',  url: '/api/v1/information/notice/add_or_update', dataType : "json", data: data.field,

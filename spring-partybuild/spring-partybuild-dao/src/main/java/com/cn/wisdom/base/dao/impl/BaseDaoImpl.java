@@ -222,7 +222,8 @@ public class BaseDaoImpl<T, K> implements BaseDao<T, java.lang.String> {
 			
 			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>="+column_name);
 			
-			if(fields.length==i) { buffer.append(field.getName()+"=?"); }else { buffer.append(field.getName()+" = ?,"); }
+			if(fields.length==i) { buffer.append(column_name+"=?"); }else { buffer.append(column_name+" = ?,"); }
+//			if(fields.length==i) { buffer.append(field.getName()+"=?"); }else { buffer.append(field.getName()+" = ?,"); }
 			
 			listField.add(val);
 		}

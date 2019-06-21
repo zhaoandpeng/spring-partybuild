@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>通知公告</title>
+<title>党费催缴</title>
 <link rel="stylesheet" type="text/css" href="../../../../layui/css/layui.css">
 <link rel="stylesheet" type="text/css" href="../../../../css/main.css">
 <link rel="stylesheet" href="/layui.extend/modules/layui_ext/dtree/dtree.css">
@@ -13,157 +13,27 @@
 </head>
 <body class="layui-layout-body">
 
+	
 	<div class="layui-row">
 		<div class="layui-col-xs2">
-			<div class="grid-demo">
-				<ul id="org_tree_view" class="dtree" data-id="0"></ul>
-			</div>
+			<div class="grid-demo" id="org_tree_view"></div>
 		</div>
 		<div class="layui-col-xs10">
-			<div class="grid-demo">
-				<!-- <form action="" class="layui-form layui-form-pane" >
-					<div class="layui-form-item">
-						<div class="layui-inline">
-							<label class="layui-form-label">验证手机</label>
-							<div class="layui-input-inline">
-								<input type="tel" name="phone" lay-verify="required|phone"
-									autocomplete="off" class="layui-input">
-							</div>
-						</div>
-						<div class="layui-inline">
-							<label class="layui-form-label">验证邮箱</label>
-							<div class="layui-input-inline">
-								<input type="text" name="email" lay-verify="email"
-									autocomplete="off" class="layui-input">
-							</div>
-						</div>
-					</div>
-				</form> -->
-				<span class="layui-breadcrumb "  lay-separator="|">
-				  <a class="layui-btn layui-btn-primary  layui-bg-orange layui-btn-xs" status="">全部</a>
-				  <a class="layui-btn layui-btn-primary  layui-btn-xs" status="3">已发布</a>
-				  <a class="layui-btn layui-btn-primary  layui-btn-xs" status="2">审批中</a>
-				  <a class="layui-btn layui-btn-primary  layui-btn-xs" status="1">被驳回</a>
-				  <a class="layui-btn layui-btn-primary  layui-btn-xs" status="0">已删除</a>
-				</span>
+			<div id="toolbar" style="display: none" >
+				<button  class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe608;</i>新增</button>
+				<button  class="layui-btn layui-btn-sm" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</button>
 			</div>
 			<div class="grid-demo">
 				<table class="layui-table" id="main_table" lay-filter="operation" lay-data="{id: 'mainData'}"> </table>
 			</div>
 		</div>
-		
 	</div>
-		<!-- <div class="layui-fluid">
-		  <div class="layui-card">
-		    <div class="layui-form layui-card-header layuiadmin-card-header-auto" lay-filter="layadmin-userfront-formlist">
-		      <div class="layui-form-item">
-		        <div class="layui-inline">
-		          <label class="layui-form-label">ID</label>
-		          <div class="layui-input-block">
-		            <input type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
-		          </div>
-		        </div>
-		        <div class="layui-inline">
-		          <label class="layui-form-label">用户名</label>
-		          <div class="layui-input-block">
-		            <input type="text" name="username" placeholder="请输入" autocomplete="off" class="layui-input">
-		          </div>
-		        </div>
-		        <div class="layui-inline">
-		          <label class="layui-form-label">邮箱</label>
-		          <div class="layui-input-block">
-		            <input type="text" name="email" placeholder="请输入" autocomplete="off" class="layui-input">
-		          </div>
-		        </div>
-		        <div class="layui-inline">
-		          <label class="layui-form-label">性别</label>
-		          <div class="layui-input-block">
-		            <select name="sex">
-		              <option value="0">不限</option>
-		              <option value="1">男</option>
-		              <option value="2">女</option>
-		            </select><div class="layui-unselect layui-form-select"><div class="layui-select-title"><input type="text" placeholder="请选择" value="不限" readonly="" class="layui-input layui-unselect"><i class="layui-edge"></i></div><dl class="layui-anim layui-anim-upbit"><dd lay-value="0" class="layui-this">不限</dd><dd lay-value="1" class="">男</dd><dd lay-value="2" class="">女</dd></dl></div>
-		          </div>
-		        </div>
-		        <div class="layui-inline">
-		          <button class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="LAY-user-front-search">
-		            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
-		          </button>
-		        </div>
-		      </div>
-		    </div>
-		    
-		    <div class="layui-card-body" style="margin-top: 10px">
-		      <div >
-		        <button  class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe608;</i>新增</button>
-		      </div>
-		      <table class="layui-table" id="main_table" lay-filter="operation" lay-data="{id: 'mainData'}"> </table>
-		    </div>
-		  </div>
-		</div> -->
-
-	<div id="toolbar" style="display: none" >
-		<button  class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe608;</i>新增</button>
-	</div>
-
-<script type="text/html" id="rowbar">
-
-  {{#  if(d.status =='2'||d.status =='1'){ }}
-  	
-  	<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">详情</a>
-
-  	<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-
-  	<a class="layui-btn layui-btn-xs" lay-event="his_audit">审批记录</a>
-
-  	<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-  	
-  {{#  } }}
-
-  {{#  if(d.status =='3'){ }}
-  	
-  	<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">详情</a>
-  	
-  	<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-  	
-  	<a class="layui-btn layui-btn-xs" lay-event="his_audit">审批记录</a>
-  	
-  	<a class="layui-btn layui-btn-xs" lay-event="his_read">阅览记录</a>
-  {{#  } }}
-
-  {{#  if(d.status =='0'){ }}
-  	
-  	<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">详情</a>
-  	
-  	<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-
-  	<a class="layui-btn layui-btn-xs" lay-event="his_read">重新编辑并提交</a>
-  	
-  	<a class="layui-btn layui-btn-xs" lay-event="his_audit">审批记录</a>
-  	
-  {{#  } }}
-
-</script>
-
-<script type="text/html" id="statusTpl">
-
-  {{# if(d.status=='0'){ }}
-	 	已删除
-  {{# } else if(d.status=='1') { }}
- 		被驳回
-  {{# } else if(d.status=='2') { }}
-     	审核中
-  {{# } else if(d.status=='3') { }}
-		已发布
-  {{# } }}
-
-</script>
 
 <script type="text/javascript">
 	
-	layui.config({base:'/layui.extend/modules/information/'}).use('info_notice', function(){
+	layui.config({base:'/layui.extend/modules/pwm/'}).use('pwm_payPartyFees', function(){
 	
-		var info_notice = layui.info_notice; info_notice();
+		var pwm_payPartyFees = layui.pwm_payPartyFees; pwm_payPartyFees();
 		
 	})
 </script>
@@ -178,41 +48,13 @@
 		    </div>
 		  </div>
 		  <div class="layui-form-item" style="margin:0px 40px; margin-bottom:20px">
-		    <label class="layui-form-label layui-bg-green">审核人</label>
-		    <div class="layui-input-block"><!--  style="width: 600px" -->
-		    	<div style="float:left;width:300px;height:450px;border:1px solid #CDC5BF;background-color: #CDC5BF;overflow-y:scroll;">
-		    		<ul id="org_tree" class="dtree" data-id="0"></ul>
-		    	</div>
-		    	<div style="float:left;width:300px;height:450px;border:1px solid #CDC5BF;">
-		    		<div style="background-color: #228B22;height: 40px;text-align: center;line-height:40px;color: white;"><h3>会员列表</h3></div>
-		    		<div style="overflow-y:scroll;height:410px;"></div>
-		    	</div>
-		    </div>
-		  </div>
-		  <div class="layui-form-item" style="margin:0px 40px; margin-bottom:20px">
-		    <label class="layui-form-label layui-bg-green">来源</label>
-		    <div class="layui-input-block">
-		      <input type="text" name="articleSource" class="layui-input">
-		    </div>
-		  </div>
-		  <div class="layui-form-item" style="margin:0px 40px; margin-bottom:20px">
-		    <label class="layui-form-label layui-bg-green">添加时间</label>
-		    <div class="layui-input-inline" style="width:272px;">
-		      <input type="text" name="createTime"  class="layui-input" id="add_time" readonly="readonly">
-		    </div>
-		  </div>
-		  <div class="layui-form-item" style="margin:0px 40px; margin-bottom:20px">
-		    <label class="layui-form-label layui-bg-green">内容</label>
-		    <textarea id="content" name="content" style="display: none;"></textarea>
-		  </div>
-		  <div class="layui-form-item" style="margin:0px 40px; margin-bottom:20px">
-		    <label class="layui-form-label layui-bg-green">是否必读</label>
+		    <label class="layui-form-label layui-bg-green">栏目</label>
 		    <div class="layui-input-inline">
 		      	<select name="isRead" lay-verify="required" class="is_read"></select>
 		    </div>
 		  </div>
 		  <div class="layui-form-item" style="margin:0px 40px; margin-bottom:20px">
-		    <label class="layui-form-label layui-bg-green">下发机构</label>
+		    <label class="layui-form-label layui-bg-green">党组织机构</label>
 		    <div class="layui-input-block" style="padding-left: 2px">
 				<div class="layui-col-lg5" style="border:1px solid #CDC5BF;">
 					<div class="layui-card">
@@ -227,7 +69,7 @@
 				<div class="layui-col-lg2">
 					<div style="height: 350px;">
 						<button class="layui-btn layui-btn-normal" style="margin:180px 0px 0px 7px;" id="set_btn">设置选中</button>
-						<button class="layui-btn layui-btn-normal" style="margin:10px 0px 0px 7px;" id="cancel_btn">取消选中</button>
+						<button class="layui-btn layui-btn-normal" style="margin:10px 0px 0px 7px;" id="move_btn">取消选中</button>
 					</div>
 				</div>
 				<div class="layui-col-lg5" style="border:1px solid #CDC5BF;">
