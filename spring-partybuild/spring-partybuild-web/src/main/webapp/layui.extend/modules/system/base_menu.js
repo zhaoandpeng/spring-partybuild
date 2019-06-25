@@ -132,7 +132,7 @@ layui.define(['layer', 'element', 'jquery', 'table',  'iconPicker', 'form', 'sli
 		  success:function(){
 			  
 			  if(data[0].pid==0){
-//				  $("#modify_form div.layui-form-item:eq(3)").hide()
+				  $("#modify_form div.layui-form-item:eq(3)").hide()
 			  }else{
 				  $.ajax({
 					  type: 'POST',  url: '/api/v1/sys/menu/list/view', dataType : "json",
